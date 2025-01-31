@@ -1,0 +1,19 @@
+﻿@model TwoFactorViewModel
+
+@{
+    ViewData["Title"] = @SR["Two Factor Login"];
+    Layout = "/Views/Shared/_LayoutNoDashboard.cshtml";
+}
+
+<form asp-controller="@nameof(UserController).RemoveController()" asp-action="@nameof(UserController.TwoFactorLogin)" method="post">
+    <input asp-for="IsPersistent" type="hidden" />
+    <input asp-for="RedirectUrl" type="hidden" />
+    <input asp-for="UserId" type="hidden" />
+
+    <div class="form-group">
+        <label asp-for="Code" class="control-label">@SR["Verification Code"]</label>
+        <input asp-for="Code" class="form-control" />
+        <span asp-validation-for="Code" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">@SR["Submit"]</button>
+</form>

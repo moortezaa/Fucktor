@@ -69,45 +69,6 @@ namespace Fucktor.Controllers
                 }
                 return await _dsTableManager.Json(rows, tableName);
             }
-            else if (tableName == "doctors")
-            {
-                var users = _appUserManager.AppUserQuery;
-
-                var usersList = await users.ToListAsync();
-                foreach (var user in usersList)
-                {
-                    user.RoleNames = (await _appUserManager.GetUserRoles(user.Id)).Select(r => r.Name!).ToList();
-                }
-
-                users = usersList.Where(u => u.RoleNames.Any(r => r == "Doctor")).AsQueryable();
-
-                if (!string.IsNullOrEmpty(filters))
-                {
-                    var filtersObjs = JsonConvert.DeserializeObject<List<DSFilterViewModel>>(filters);
-                    if (filtersObjs != null && filtersObjs.Any(f => f.PropertyName == nameof(AppUser.RoleNames)))
-                    {
-                        var roleFilter = filtersObjs.First(f => f.PropertyName == nameof(AppUser.RoleNames));
-
-                        users = usersList.Where(u => u.RoleNames.Any(r => r.Contains(roleFilter.FilterTerm, StringComparison.OrdinalIgnoreCase))).AsQueryable();
-                    }
-                }
-
-                users = await _dsTableManager.DoSFP(users, sortPropertyName, sortDesending, filters, page, rowsPerPage);
-
-                var rows = new List<string>();
-                var row = 0;
-                foreach (var user in users)
-                {
-                    if (!user.RoleNames.Any())
-                    {
-                        user.RoleNames = (await _appUserManager.GetUserRoles(user.Id)).Select(r => r.Name!).ToList();
-                    }
-                    row++;
-                    ViewData["Row"] = row;
-                    rows.Add(await _dsTableManager.RenderRow(user, ViewData, customRowView: "User/IndexRow"));
-                }
-                return await _dsTableManager.Json(rows, tableName);
-            }
             return Json("invalid table name");
         }
 
@@ -135,31 +96,6 @@ namespace Fucktor.Controllers
                 var count = await _dsTableManager.CountData(users, filters);
                 return await _dsTableManager.Json(count, tableName);
             }
-            else if (tableName == "doctors")
-            {
-                var users = _appUserManager.AppUserQuery;
-
-                var usersList = await users.ToListAsync();
-                foreach (var user in usersList)
-                {
-                    user.RoleNames = (await _appUserManager.GetUserRoles(user.Id)).Select(r => r.Name!).ToList();
-                }
-
-                users = usersList.Where(u => u.RoleNames.Any(r => r == "Doctor")).AsQueryable();
-
-                if (!string.IsNullOrEmpty(filters))
-                {
-                    var filtersObjs = JsonConvert.DeserializeObject<List<DSFilterViewModel>>(filters);
-                    if (filtersObjs != null && filtersObjs.Any(f => f.PropertyName == nameof(AppUser.RoleNames)))
-                    {
-                        var roleFilter = filtersObjs.First(f => f.PropertyName == nameof(AppUser.RoleNames));
-
-                        users = usersList.Where(u => u.RoleNames.Any(r => r.Contains(roleFilter.FilterTerm, StringComparison.OrdinalIgnoreCase))).AsQueryable();
-                    }
-                }
-                var count = await _dsTableManager.CountData(users, filters);
-                return await _dsTableManager.Json(count, tableName);
-            }
             return await _dsTableManager.Json(0, tableName);
         }
 
@@ -167,14 +103,6 @@ namespace Fucktor.Controllers
         [Dashboard("users", Order = 0)]
         [Permission("ViewUsers", true)]
         public IActionResult Index()
-        {
-            return View();
-        }
-
-        [HttpGet]
-        [Permission("ViewDoctorsList", true)]
-        [Dashboard("user-doctor", Order = 2)]
-        public async Task<IActionResult> DoctorsList()
         {
             return View();
         }
@@ -518,6 +446,7 @@ namespace Fucktor.Controllers
         }
 
         [HttpPost]
+        //a way to bypass password for users who have two-factor enabled or must login using two-factor
         public async Task<JsonResult> NeedPassword(SignInViewModel model)
         {
             var user = await _appUserManager.GetUserByUserName(model.UserName);
@@ -530,14 +459,6 @@ namespace Fucktor.Controllers
                 });
             }
 
-            if (await _appUserManager.IsInRole(user.Id, "Doctor") || await _appUserManager.IsInRole(user.Id, "Admin"))
-            {
-                return Json(new
-                {
-                    success = true,
-                    needPassword = true
-                });
-            }
             return Json(new
             {
                 success = true,

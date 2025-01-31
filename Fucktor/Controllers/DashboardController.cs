@@ -23,7 +23,7 @@ namespace Fucktor.Controllers
             Assembly assembly = Assembly.GetExecutingAssembly();
 
             var Controllers = assembly.GetTypes()
-                .Where(t => t.IsClass && t.FullName.Contains($"ExirNobat.Controllers"));
+                .Where(t => t.IsClass && t.FullName.Contains($"{assembly.GetName().Name}.Controllers"));
 
             var dashboardItems = new List<DashboardItem>();
             foreach (var controller in Controllers)

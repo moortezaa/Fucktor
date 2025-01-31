@@ -1,0 +1,15 @@
+﻿@model AppUser
+
+<tr>
+    <td>@ViewData["Row"]</td>
+    <td>@Model.UserName</td>
+    <td>@Model.Name</td>
+    <td>@Model.LastName</td>
+    <td>@Model.PhoneNumber</td>
+    <td>@Model.NationalCode</td>
+    <td>@string.Join(" | ", Model.RoleNames)</td>
+    <td>
+        @Html.ActionLink(SR["Details"].Value, nameof(UserController.Detail), nameof(UserController).RemoveController(), new { id = Model.Id }, new { @class = "btn btn-warning" })
+        <a asp-action="@nameof(UserController.Edit)" asp-controller="@nameof(UserController).RemoveController()" asp-route-id="@Model.Id" class="btn btn-primary">@SR["Edit"]</a>
+    </td>
+</tr>

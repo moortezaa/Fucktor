@@ -1,0 +1,13 @@
+﻿@model AppUser
+
+این کدی تایید برای کاربر اسال باید بشود @ViewData["Code"]
+
+<form id="verify-form" asp-action="@nameof(UserController.VerifyPhoneNumber)" method="post">
+    <input type="hidden" name="phoneNumber" value="@Model.PhoneNumber" />
+    <input type="hidden" name="userId" value="@Model.Id" />
+    <div class="form-group">
+        <label>@SR["Verification Code"]</label>
+        <input name="code" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">@SR["Submit"]</button>
+</form>

@@ -1,0 +1,59 @@
+﻿@model AppUser
+
+<form id="edit-form" asp-action="@nameof(UserController.Edit)" asp-controller="@nameof(UserController).RemoveController()" method="post" class="row mt-3">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="UserName" />
+    <div class="row mt-3">
+        <div class="form-group col-12 col-md-3">
+            <label for="Name">@Model.DisplayNameFor(x => x.Name, localizerFactory)</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label for="LastName">@Model.DisplayNameFor(x => x.LastName, localizerFactory)</label>
+            <input asp-for="LastName" class="form-control" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label for="DisplayName">@Model.DisplayNameFor(x => x.DisplayName, localizerFactory)</label>
+            <input asp-for="DisplayName" class="form-control" />
+            <span asp-validation-for="DisplayName" class="text-danger"></span>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label for="Gender" class="control-label">@Model.DisplayNameFor(x => x.Gender, localizerFactory)</label>
+            <select asp-for="Gender" class="form-control">
+                @foreach (var gender in Enum.GetValues(typeof(Gender)))
+                {
+                    <option value="@((int)gender)">@gender.ToLocalizedString(localizerFactory)</option>
+                }
+            </select>
+            <span asp-validation-for="Gender" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="form-group col-12 col-md-3">
+            <label for="NationalCode">@Model.DisplayNameFor(x => x.NationalCode, localizerFactory)</label>
+            <input asp-for="NationalCode" class="form-control" />
+            <span asp-validation-for="NationalCode" class="text-danger"></span>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label for="PhoneNumber">@Model.DisplayNameFor(x => x.PhoneNumber, localizerFactory)</label>
+            <input asp-for="PhoneNumber" class="form-control" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="form-group col-12 col-md-3">
+            <label for="Email">@Model.DisplayNameFor(x => x.Email, localizerFactory)</label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-2">
+            <button type="submit" class="btn btn-primary">@SR["Save"]</button>
+        </div>
+    </div>
+</form>

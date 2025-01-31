@@ -1,0 +1,33 @@
+﻿<link rel="stylesheet" href="~/lib/ds-template-ui/table.css" />
+
+@{
+    ViewData["Title"] = SR["Users List"].Value;
+
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@{
+    var propertiesToShow = new List<string>()
+    {
+        nameof(AppUser.UserName),
+        nameof(AppUser.Name),
+        nameof(AppUser.LastName),
+        nameof(AppUser.PhoneNumber),
+        nameof(AppUser.NationalCode),
+        nameof(AppUser.RoleNames),
+    };
+}
+<table ds-model-type="typeof(AppUser)"
+       ds-controller="@nameof(UserController).Replace("Controller","")"
+       ds-name="index"
+       ds-rows-per-page="10"
+       ds-post-columns="1"
+       ds-pre-columns="1"
+       ds-properties-to-show="propertiesToShow"></table>
+
+
+@section Scripts {
+    <script src="~/lib/ds-template-ui/table.js"></script>
+    <script src="~/lib/ds-template-ui/dropdown.js"></script>
+}

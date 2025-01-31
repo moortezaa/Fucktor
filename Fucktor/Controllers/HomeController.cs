@@ -2,18 +2,18 @@ using System.Diagnostics;
 using Fucktor.Models;
 using Microsoft.AspNetCore.Mvc;
 using Fucktor.Attributes;
+using Business.Attributes;
 
 namespace Fucktor.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _logger = logger;
         }
 
+        [Permission("ViewHome", true)]
+        [Dashboard("home", Order = 1)]
         public IActionResult Index()
         {
             return View();

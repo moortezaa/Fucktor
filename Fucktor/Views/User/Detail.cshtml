@@ -1,0 +1,309 @@
+﻿@model AppUser
+<link href="~/lib/quill/quill.snow.css" rel="stylesheet" />
+<link href="~/css/tab.css" rel="stylesheet" />
+<link href="~/css/tabrtl.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/lib/ds-template-ui/table.css" />
+<link href="~/lib/prsiandatetime/mds.bs.datetimepicker.style.css" rel="stylesheet" />
+@{
+    ViewData["Title"] = SR["User Detail"].Value;
+    var userRoles = (List<AppRole>)ViewData["Roles"];
+    var user = (AppUser)ViewData["CurrentUser"];
+    var hasAccessToRoles = userManager.IsInRole(user.Id, "Admin").Result;
+}
+
+<div class="d-flex gap-3">
+
+    <a asp-action="@nameof(UserController.Edit)" asp-controller="@nameof(UserController).RemoveController()" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fa-duotone fa-solid fa-pen-to-square"></i><span class="ps-2 pe-0">@SR["Edit"]</span></a>
+    <a asp-action="@nameof(UserController.ChangePassword)" asp-controller="@nameof(UserController).RemoveController()" asp-route-id="@Model.Id" class="btn btn-warning"><i class="fa-duotone fa-solid fa-key"></i><span class="ps-2 pe-0">@SR["Change Password"]</span></a>
+    <a href="/api/GetDoctorVisits/?doctorPhone=@Model.PhoneNumber&doctorNationalCode=@Model.NationalCode&from={0}&to={1}" class="btn btn-info" target="_blank"><i class="fa-solid fa-webhook"></i><span class="ps-2 pe-0">API</span></a>
+    @if (!Model.TwoFactorEnabled)
+    {
+        <form id="form-enable-twofactor" asp-action="@nameof(UserController.EnableTwoFactorAuthentication)" asp-controller="@nameof(UserController).RemoveController()" method="post">
+            <input type="hidden" name="userId" value="@Model.Id" />
+            <button role="button" type="submit" class="btn btn-success"><i class="fa-duotone fa-solid fa-message-sms"></i><span class="ps-2 pe-0">@SR["EnableTwoFactor"]</span></button>
+        </form>
+    }
+    else
+    {
+        <form id="form-enable-twofactor" asp-action="@nameof(UserController.DisableTwoFactorAuthentication)" asp-controller="@nameof(UserController).RemoveController()" method="post">
+            <input type="hidden" name="userId" value="@Model.Id" />
+            <button role="button" type="submit" class="btn btn-success"><i class="fa-duotone fa-solid fa-message-slash"></i><span class="ps-2 pe-0">@SR["DisableTwoFactor"]</span></button>
+        </form>
+    }
+</div>
+
+<div class="d-flex flex-row mt-3">
+    <button class="btn btn-outline-dark tab-button" data-bs-toggle="collapse" data-bs-target="#section-details"><i class="fa fa-info-circle"></i><span class="ps-2 pe-0">@SR["Details"]</span></button>
+    @if (hasAccessToRoles)
+    {
+        <button class="btn btn-outline-dark tab-button collapsed" data-bs-toggle="collapse" data-bs-target="#section-roles"><i class="fa fa-users"></i><span class="ps-2 pe-0">@SR["Roles"]</span></button>
+    }
+</div>
+
+<div id="tab-body" class="row mt-2">
+    <div id="section-details" class="collapse show col-12" data-bs-parent="#tab-body">
+        <ul id="user-properties">
+            <li>
+                <strong>@Model.DisplayNameFor(x => x.Id, localizerFactory): </strong>
+                @Model.Id
+            </li>
+            <li>
+                <strong>@Model.DisplayNameFor(x => x.UserName, localizerFactory): </strong>
+                @Model.UserName
+            </li>
+            <li>
+                <strong>@Model.DisplayNameFor(x => x.DisplayName, localizerFactory): </strong>
+                @Model.DisplayName
+            </li>
+            <li>
+                <strong>@Model.DisplayNameFor(x => x.Email, localizerFactory): </strong>
+                @Model.Email
+            </li>
+            <li>
+                <strong>@Model.DisplayNameFor(x => x.EmailConfirmed, localizerFactory): </strong>
+                @SR[Model.EmailConfirmed.ToString()].Value
+            </li>
+            <li>
+                <strong>@Model.DisplayNameFor(x => x.PhoneNumber, localizerFactory): </strong>
+                @Model.PhoneNumber
+            </li>
+            <li>
+                <strong>@Model.DisplayNameFor(x => x.PhoneNumberConfirmed, localizerFactory): </strong>
+                @SR[Model.PhoneNumberConfirmed.ToString()].Value
+                @if (!Model.PhoneNumberConfirmed)
+                {
+                    <a asp-action="@nameof(UserController.VerifyPhoneNumber)" asp-controller="@nameof(UserController).RemoveController()" asp-route-id="@Model.Id" class="btn btn-success btn-sm">@SR["Enable"]</a>
+                }
+            </li>
+            <li>
+                <strong>@Model.DisplayNameFor(x => x.Name, localizerFactory): </strong>
+                @Model.Name
+            </li>
+            <li>
+                <strong>@Model.DisplayNameFor(x => x.LastName, localizerFactory): </strong>
+                @Model.LastName
+            </li>
+            <li>
+                <strong>@Model.DisplayNameFor(x => x.NationalCode, localizerFactory): </strong>
+                @Model.NationalCode
+            </li>
+        </ul>
+    </div>
+    @if (hasAccessToRoles)
+    {
+        <div id="section-roles" class="collapse col-12" data-bs-parent="#tab-body">
+            <h3>@SR["Roles"]</h3>
+            <ul>
+                @foreach (var role in userRoles)
+                {
+                    <li>
+                        @role.Name
+                        <form asp-action="@nameof(UserController.RemoveUserFromRole)" asp-controller="@nameof(UserController).RemoveController()" method="post">
+                            <input type="hidden" name="userId" value="@Model.Id" />
+                            <input type="hidden" name="roleId" value="@role.Id" />
+                            <button type="submit" class="btn btn-danger">@SR["Remove"]</button>
+                        </form>
+                    </li>
+                }
+            </ul>
+            <form asp-action="@nameof(UserController.AddUserToRole)" asp-controller="@nameof(UserController).RemoveController()" method="post">
+                <input type="hidden" name="userId" value="@Model.Id" />
+                @{
+                    var roles = (List<AppRole>)ViewData["AvailableRoles"];
+                    var selectList = new SelectList(roles, "Id", "Name");
+                }
+                <div class="row">
+                    <div class="col-auto">
+                        <select name="roleId" asp-items="selectList" class="form-select"></select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">@SR["Add to Role"]</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    }
+</div>
+@section Scripts {
+    <script src="~/lib/ds-template-ui/table.js"></script>
+    <script src="~/lib/ds-template-ui/dropdown.js"></script>
+    <script src="~/lib/prsiandatetime/mds.bs.datetimepicker.js"></script>
+    <script src="~/lib/quill/quill.js"></script>
+    <script src="~/lib/quill/quill.htmlEditButton.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            $(document).on("submit", ".vacation-delete-form", function (e) {
+                e.preventDefault();
+                var form = $(this)[0];
+                var formData = new FormData(form);
+
+                $.ajax({
+                    url: form.action,
+                    type: form.method,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        if (data.success) {
+                            form.closest("tr").remove();
+                            Toast("@Html.Raw(SR["Info"].Value)", data.message, "success")
+                        } else {
+                            Toast("@Html.Raw(SR["Error"].Value)", data.message, "danger")
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Toast("@Html.Raw(SR["Error"].Value)", "@Html.Raw(SR["Check your internet connection"].Value)", "danger")
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(() => {
+            var toolbarOptions = [
+                ['bold', 'italic', 'underline', 'strike'],          // toggled buttons
+                ['blockquote', 'code-block'],
+                ['link', 'image'],
+
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'script': 'sub' }, { 'script': 'super' }],       // superscript/subscript
+                [{ 'indent': '-1' }, { 'indent': '+1' }],           // outdent/indent
+                [{ 'direction': 'rtl' }],   // text direction
+
+                [{ 'size': ['small', false, 'large', 'huge'] }],    // custom dropdown
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+                [{ 'color': [] }, { 'background': [] }],            // dropdown with defaults from theme
+                [{ 'font': [] }],
+                [{ 'align': [] }],
+
+                ['clean']                                           // remove formatting button
+            ];
+
+            Quill.register("modules/htmlEditButton", htmlEditButton);
+            var quill = new Quill('#editor', {
+                modules: {
+                    toolbar: toolbarOptions,
+                    htmlEditButton: {},
+                },
+                theme: 'snow'
+            });
+
+            quill.on('text-change', function (delta, oldDelta, source) {
+                $('#CustomTopHTML').val($('#editor .ql-editor').html());
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            const dtp1Instance = new mds.MdsPersianDateTimePicker($('#vacation-input-start')[0], {
+                targetTextSelector: '#vacation-input-start',
+                targetDateSelector: '#vacation-start-date',
+                dateFormat: 'yyyy-MM-ddTHH:mm',
+                enableTimePicker: true,
+                textFormat: 'yyyy/MM/dd HH:mm',
+            });
+            const dtp2Instance = new mds.MdsPersianDateTimePicker($('#vacation-input-end')[0], {
+                targetTextSelector: '#vacation-input-end',
+                targetDateSelector: '#vacation-end-date',
+                dateFormat: 'yyyy-MM-ddTHH:mm',
+                enableTimePicker: true,
+                textFormat: 'yyyy/MM/dd HH:mm',
+            });
+        });
+        $("#add-vacation-form").on("submit", function (e) {
+            e.preventDefault()
+            $.ajax({
+                url: $(this).attr("action"),
+                type: "POST",
+                data: $(this).serialize(),
+                success: function (data) {
+                    if (data.success) {
+                        location.reload()
+                    } else {
+                        Toast("@SR["Error"]", data.message, "danger")
+                    }
+                },
+                error: function (data) {
+                    Toast("@SR["Error"]", "@SR["Check your internet connection"]", "danger")
+                }
+            });
+        });
+    </script>
+    <script>
+        $("#form-enable-twofactor").on("submit", function (e) {
+            e.preventDefault()
+            $.ajax({
+                url: $(this).attr("action"),
+                type: $(this).attr("method"),
+                data: $(this).serialize(),
+                success: function (data) {
+                    if (data.success) {
+                        Toast("@SR["Successful"]", data.message, "success")
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000)
+                    } else {
+                        Toast("@SR["Error"]", data.message, "danger")
+                    }
+                },
+                error: function (data) {
+                    Toast("@SR["Error"]", "@SR["Check your internet connection"]", "danger")
+                }
+            });
+        });
+    </script>
+    <script>
+        $("#gateway-account-form>form").on("submit", function (e) {
+            e.preventDefault()
+            $.ajax({
+                url: $(this).attr("action"),
+                type: $(this).attr("method"),
+                data: $(this).serialize(),
+                success: function (data) {
+                    if (data.succeeded) {
+                        Toast("@SR["Successful"]", data.message, "success")
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000)
+                    } else {
+                        Toast("@SR["Error"]", data.message, "danger")
+                    }
+                },
+                error: function (data) {
+                    Toast("@SR["Error"]", "@SR["Check your internet connection"]", "danger")
+                }
+            });
+        });
+        $(document).on("submit", ".form-gateway-account-delete", function (e) {
+            e.preventDefault()
+            $.ajax({
+                url: $(this).attr("action"),
+                type: $(this).attr("method"),
+                data: $(this).serialize(),
+                success: function (data) {
+                    if (data.succeeded) {
+                        Toast("@SR["Successful"]", data.message, "success")
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000)
+                    } else {
+                        Toast("@SR["Error"]", data.message, "danger")
+                    }
+                },
+                error: function (data) {
+                    Toast("@SR["Error"]", "@SR["Check your internet connection"]", "danger")
+                }
+            });
+        });
+        $(document).on('click', '.btn-edit-gateway-account', (e) => {
+            var model = JSON.parse(new DOMParser().parseFromString($(e.currentTarget).data('model'), "text/html").documentElement.textContent)
+            for (const [key, value] of Object.entries(model)) {
+                var input = $("#gateway-account-form").find('[name]').filter(function () { return $(this).attr('name').toLowerCase() === key.toLowerCase(); })
+                input.val(value);
+            }
+            $("#gateway-account-form").collapse('show');
+        })
+    </script>
+}

@@ -1,0 +1,88 @@
+﻿@model SignInViewModel
+
+@{
+    ViewData["Title"] = SR["Sign In"];
+    Layout = "/Views/Shared/_LayoutNoDashboard.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-4 col-12">
+
+    </div>
+    <div class="col-md-4 col-12">
+        <center>
+            <img src="/images/Elixir-Yab-logo.png" />
+        </center>
+        <div id="javascript-alert" class="alert alert-danger" role="alert">
+            @SR["To use this website Javascript must be enabled."]
+        </div>
+        <form id="sign-in-form" asp-action="@nameof(UserController.SignIn)" asp-controller="@nameof(UserController).RemoveController()" method="post">
+            <input type="hidden" name="returnUrl" value="@Model.RedirectUrl" />
+            <div class="form-group">
+                <label for="UserName">@Model.DisplayNameFor(x => x.UserName, localizerFactory)</label>
+                <input asp-for="UserName" class="form-control" disabled="disabled"/>
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div id="password-group" class="form-group collapse">
+                <label for="Password">@Model.DisplayNameFor(x => x.Password, localizerFactory)</label>
+                <input asp-for="Password" type="password" class="form-control" disabled="disabled"/>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="form-check">
+                    <input asp-for="RememberMe" class="form-check-input" disabled="disabled" />
+                    <label for="RememberMe" class="form-check-label">@Model.DisplayNameFor(x => x.RememberMe, localizerFactory)</label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" disabled="disabled">@SR["Sign In"]</button>
+            @* <a asp-action="@nameof(UserController.RegisterPatient)" asp-controller="@nameof(UserController).RemoveController()">@SR["Sign Up"]</a> *@
+            <span id="validation-span" class="text-danger"></span>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        var needPassword = null;
+        $(document).ready(() => {
+            $('#javascript-alert').remove()
+            $('input[name=UserName]').removeAttr('disabled')
+            $('input[name=RememberMe]').removeAttr('disabled')
+            $('button[type=submit]').removeAttr('disabled')
+            $("#sign-in-form").on("submit", (e) => {
+                var form = e.currentTarget;
+                var formData = new FormData(form);
+
+                if (needPassword === null) {
+                    e.preventDefault();
+                    $.ajax({
+                        url: '@Url.Action(nameof(UserController.NeedPassword), nameof(UserController).RemoveController())',
+                        type: form.method,
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            if (data.success) {
+                                needPassword = data.needPassword;
+                                if (needPassword) {
+                                    $('#password-group').collapse('show')
+                                    $('input[name=Password]').removeAttr('disabled')
+                                }
+                                else {
+                                    $('input[name=Password]').val($('input[name=UserName]').val())
+                                    $('input[name=Password]').removeAttr('disabled')
+                                    $(form).submit()
+                                }
+                            } else {
+                                $('#validation-span').text(data.message)
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            Toast("@Html.Raw(SR["Error"].Value)", "@Html.Raw(SR["Check your internet connection"].Value)", "danger")
+                        }
+                    });
+                }
+            })
+        })
+    </script>
+}
