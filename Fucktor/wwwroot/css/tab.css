@@ -1,0 +1,11 @@
+.tab-button {
+    box-shadow: unset !important;
+    transition: margin ease .3s;
+}
+
+    .tab-button:not(.collapsed) {
+        border-bottom: none;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+        margin-right: 1em;
+    }

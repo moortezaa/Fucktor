@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - اکسیر نوبت</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="~/lib/PrsianDateTime/mds.bs.datetimepicker.style.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ExirNobat.styles.css" asp-append-version="true" />
+    @* Make RTL if culture is RTL *@
+    @{
+        if (ViewData["Culture"] is CultureInfo cultureInfo && cultureInfo.TextInfo.IsRightToLeft)
+        {
+            <link rel="stylesheet" href="~/css/rtl.css" asp-append-version="true" />
+        }
+    }
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">ExirNobat</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        @* <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Home</a>
+                        </li> *@
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col col-sm col-md-4 col-lg-3">
+                <ul id="dashboard-button-list" class="list-group p-3 dashboard-button-list overflow-auto sleek-scroll">
+                </ul>
+            </div>
+            <div class="col-12 col-sm-12 col-md-8 col-lg-9">
+                <main role="main" class="pb-3">
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    </div>
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - ExirNobat - <a href="https://exirmatab.com">اکسیر</a>
+        </div>
+    </footer>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/PrsianDateTime/mds.bs.datetimepicker.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "@($"/{nameof(DashboardController).RemoveController()}/{nameof(DashboardController.GetDashboard)}")",
+                type: "POST",
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function (data, status) {
+                    for (var i = 0; i < data.length; i++) {
+                        var dashboardButton = CreateDashboardItem(data[i]);
+                        $("#dashboard-button-list").append(dashboardButton)
+                    }
+                    $(".dashboard-button.active").removeClass("active");
+                    $(".dashboard-button").filter((i, e) => {
+                        var bUrl = $(e).data("url");
+                        var url = window.location.href;
+                        var path = new URL(url).pathname;
+                        var curl = path.split("?")[0];
+                        curl = curl.replace("/", "").toLowerCase()
+                        bUrl = bUrl.replace("/", "").toLowerCase()
+                        return curl == bUrl;
+                    }).addClass("active")
+                    $(".dashboard-button.active").parents(".dashboard-childes-container").collapse("show");
+                },
+                error: function (xhr, desc, err) {
+                    $("#dashboard-button-list").html(xhr.responseText);
+                }
+            })
+        });
+        function CreateDashboardItem(data) {
+            var li = $("<li></li>");
+            li.attr("id", data.id);
+            li.addClass("list-group-item dashboard-button border-0");
+            li.data("url", data.link);
+            li.data("name", data.display);
+            var icon = $("<i class=\"fa-duotone fa-" + data.icon + "\"></i>")
+            li.append(icon);
+            li.append(data.display);
+            if (data.childs.length > 0) {
+                var collapseId = "collapse-" + data.id;
+                var hr = $("<hr/>");
+                hr.addClass("vertical dark h-100 mr-auto");
+                li.append(hr);
+                var chevron = $("<i></i>");
+                chevron.addClass("fa-solid fa-chevron-down collapse-chevron collapsed");
+                chevron.attr("data-bs-toggle", "collapse");
+                chevron.attr("data-bs-target", "#" + collapseId);
+                li.append(chevron);
+                var collapse = $("<div></div>");
+                collapse.attr("id", collapseId);
+                collapse.addClass("collapse ms-3 dashboard-childes-container");
+                for (var i = 0; i < data.childs.length; i++) {
+                    var child = CreateDashboardItem(data.childs[i]);
+                    collapse.append(child);
+                }
+            }
+            return [li, collapse];
+        }
+        $(document).on("click", ".dashboard-button", function (e) {
+            if(e.target.tagName == "I") {
+                return;
+            }
+            var url = $(this).data("url");
+            location.href = url
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

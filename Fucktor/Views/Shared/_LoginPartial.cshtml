@@ -1,0 +1,26 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a class="btn btn-outline-warning text-dark" asp-action="@nameof(UserController.Detail)" asp-controller="@nameof(UserController).RemoveController()" asp-route-id="@(ViewData["CurrentUser"] is AppUser user?user.Id:"")"><i class="fa fa-cog"></i><span class="ps-2 pe-0">تنظیمات کاربر @User.Identity?.Name</span></a>
+        </li>
+        <li class="nav-item ps-2 pe-0">
+            <form class="form-inline" asp-action="@nameof(UserController.LogOut)" asp-controller="@nameof(UserController).RemoveController()">
+                <button type="submit" class="btn btn-dark"><i class="fa fa-door-open"></i><span class="ps-2 pe-0">خروج از سیستم</span></button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            @* <a class="nav-link text-dark" asp-action="@nameof(UserController.RegisterPatient)" asp-controller="@nameof(UserController).RemoveController()">Register</a> *@
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-action="@nameof(UserController.SignIn)" asp-controller="@nameof(UserController).RemoveController()">ورود</a>
+        </li>
+    }
+</ul>

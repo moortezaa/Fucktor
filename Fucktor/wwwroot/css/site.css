@@ -1,0 +1,175 @@
+:root {
+    --dark: #1a1a1a;
+    --accent1: #0ccb8d;
+    --accent2: #06990c;
+    --shadow-subtle: 0 .3125rem .625rem 0 rgba(0,0,0,.12);
+    --shadow-medium: 0 6px 13px 0 rgba(0,0,0,0.07);
+    --gradient1: linear-gradient(310deg, var(--accent1), var(--accent2));
+    --body-color: #67748e;
+    --title-color: #344767;
+    --bs-gray-100: #f8f9fa;
+    --bs-gray-200: #e9ecef;
+    --bs-gray-300: #dee2e6;
+    --bs-gray-400: #ced4da;
+    --bs-gray-500: #adb5bd;
+    --bs-gray-600: #6c757d;
+    --bs-gray-700: #495057;
+    --bs-gray-800: #343a40;
+    --bs-gray-900: #212529;
+}
+
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.rtl {
+    direction: rtl;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+/*#region dashboard*/
+.dashboard-button-list {
+    gap: 1rem;
+}
+
+.dashboard-button {
+    font-weight: 600;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    cursor: pointer;
+    background-color: transparent;
+    justify-content: flex-start;
+}
+
+    .dashboard-button i:nth-child(1) {
+        background-color: #fff;
+        padding: 10px;
+        border-radius: .5rem;
+        width: 32px;
+        height: 32px;
+        background-position: 50%;
+        text-align: center !important;
+        box-shadow: var(--shadow-subtle) !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .dashboard-button.active {
+        color: #344767;
+        background-color: #fff;
+        box-shadow: var(--shadow-medium);
+        border-radius: .5rem;
+    }
+
+        .dashboard-button.active i:nth-child(1) {
+            background-image: var(--gradient1);
+            color: white;
+        }
+
+    .dashboard-button .collapse-chevron {
+        transition: transform 0.3s;
+        display: flex;
+        justify-content: center;
+        width: 2rem;
+    }
+
+.collapsed.collapse-chevron {
+    transform: rotate(90deg);
+}
+
+.dashboard-first-card {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+}
+
+.dashboard-childes-container {
+    border-right: 2px solid var(--accent2);
+}
+/*#endregion */
+
+/*#region calendar day column*/
+.calendar-day-column {
+    display: flex;
+    gap: 0.6rem;
+    overflow-x: auto;
+}
+
+.calendar-day-column-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 11rem;
+}
+
+.calenar-day-column-header {
+    background: var(--accent1);
+    padding: 0.3rem;
+    border-radius: 0.4rem;
+    text-align: center;
+}
+
+.calendar-day-column-item {
+    display: flex;
+    padding: .3rem;
+    border: 1px solid var(--bs-gray-300);
+    border-radius: .4rem;
+    justify-content: space-between;
+}
+
+.calendar-day-column-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border: 1px solid var(--bs-gray-200);
+    border-radius: 8px;
+}
+
+    .calendar-day-column-group:nth-child(2n+1) .calendar-day-column-group-title {
+        background-color: var(--bs-gray-200);
+        border-radius: 6px 0 0 6px;
+    }
+
+    .calendar-day-column-group:nth-child(2n) .calendar-day-column-group-title {
+        background-color: var(--bs-gray-100);
+        border-radius: 6px 0 0 6px;
+    }
+
+.calendar-day-column-group-title {
+    width: 24pt;
+    overflow: hidden;
+    height: 100%;
+}
+
+    .calendar-day-column-group-title > span {
+        display: block;
+        width: max-content;
+        transform: rotate(-90deg) translate(-50%, -100%);
+    }
+
+.calendar-day-column-group-body {
+    flex-grow: 1;
+}
+/*#endregion */

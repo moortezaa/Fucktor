@@ -1,0 +1,4 @@
+.tab-button:not(.collapsed) {
+    margin-right: unset;
+    margin-left: 1em;
+}
