@@ -8,10 +8,16 @@ namespace Core
         public string? Name { get; set; }
         public string? LastName { get; set; }
         public string? NationalCode { get; set; }
+        public string? DisplayName { get; set; }
+        public string? Address { get; set; }
+        public string? PostalCode { get; set; }
+
+        public string? CompanyName { get; set; }
+        public string? EconomicCode { get; set; }
+        public string? RegistrationNumber { get; set; }
 
         public Gender Gender { get; set; } = Gender.NotSet;
 
-        public string? DisplayName { get; set; }
 
         public List<GatewayAccount> GatewayAccounts { get; set; } = new List<GatewayAccount>();
 
