@@ -21,14 +21,14 @@ namespace Business
             _userRepository = userRepository;
         }
 
-        public async Task<RoleManagerResult> AddRole(string roleName)
+        public async Task<AuthenticationResult> AddRole(string roleName)
         {
             // Validation
             List<string> validationErrors = ValidateRoleName(roleName);
 
             if (validationErrors.Any())
             {
-                return new RoleManagerResult()
+                return new AuthenticationResult()
                 {
                     Succeeded = false,
                     Errors = validationErrors
@@ -38,10 +38,10 @@ namespace Business
             if (!await _roleManager.RoleExistsAsync(roleName))
             {
                 var result = await _roleManager.CreateAsync(new AppRole() { Name = roleName });
-                return new RoleManagerResult(result);
+                return new AuthenticationResult(result);
             }
 
-            return new RoleManagerResult()
+            return new AuthenticationResult()
             {
                 Succeeded = false,
                 Errors = new List<string>() { "Role already exists" }
@@ -53,14 +53,14 @@ namespace Business
             return await _roleRepository.GetAllAsync();
         }
 
-        public async Task<RoleManagerResult> RenameRole(string roleName, string newName)
+        public async Task<AuthenticationResult> RenameRole(string roleName, string newName)
         {
             var role = await _roleManager.FindByNameAsync(roleName) ?? throw new Exception("Role not found");
 
             var errors = ValidateRoleName(newName);
             if (errors.Any())
             {
-                return new RoleManagerResult()
+                return new AuthenticationResult()
                 {
                     Succeeded = false,
                     Errors = errors
@@ -71,10 +71,10 @@ namespace Business
             if (result.Succeeded)
             {
                 var updateResult = await _roleManager.UpdateAsync(role);
-                return new RoleManagerResult(updateResult);
+                return new AuthenticationResult(updateResult);
             }
 
-            return new RoleManagerResult(result);
+            return new AuthenticationResult(result);
         }
 
         private static List<string> ValidateRoleName(string roleName)
@@ -108,14 +108,14 @@ namespace Business
             return validationErrors;
         }
 
-        public async Task<RoleManagerResult> DeleteRole(string roleName)
+        public async Task<AuthenticationResult> DeleteRole(string roleName)
         {
             var role = await _roleManager.FindByNameAsync(roleName) ?? throw new Exception("Role not found");
 
             // Check if role is assigned to any user
             if (await _roleRepository.IsAnyUserInRole(role.Id))
             {
-                return new RoleManagerResult()
+                return new AuthenticationResult()
                 {
                     Succeeded = false,
                     Errors = new List<string>() { "Role is assigned to user" }
@@ -123,10 +123,10 @@ namespace Business
             }
 
             var result = await _roleManager.DeleteAsync(role);
-            return new RoleManagerResult(result);
+            return new AuthenticationResult(result);
         }
 
-        public async Task<RoleManagerResult> AddPermissionToRole(string roleName, string permissionName)
+        public async Task<AuthenticationResult> AddPermissionToRole(string roleName, string permissionName)
         {
             var role = await _roleRepository.GetRoleByNameIncludePermissionsAsync(roleName) ?? throw new KeyNotFoundException("Role not found");
 
@@ -134,7 +134,7 @@ namespace Business
 
             if (role.Permissions.Any(rp => rp.PermissionId == permission.Id))
             {
-                return new RoleManagerResult()
+                return new AuthenticationResult()
                 {
                     Succeeded = false,
                     Errors = new List<string>() { "Permission already assigned to role" }
@@ -149,12 +149,12 @@ namespace Business
             var rows = await _roleRepository.SaveChangesAsync();
             if (rows == 1)
             {
-                return new RoleManagerResult()
+                return new AuthenticationResult()
                 {
                     Succeeded = true
                 };
             }
-            return new RoleManagerResult()
+            return new AuthenticationResult()
             {
                 Succeeded = false,
                 Errors = new List<string>() { "Error adding permission to role" }
@@ -168,7 +168,7 @@ namespace Business
             return role.Permissions.Select(rp => rp.Permission!).ToList();
         }
 
-        public async Task<RoleManagerResult> RemovePermissionFromRole(string roleName, string permission)
+        public async Task<AuthenticationResult> RemovePermissionFromRole(string roleName, string permission)
         {
             var role = await _roleRepository.GetRoleByNameIncludePermissionsAsync(roleName) ?? throw new KeyNotFoundException("Role not found");
 
@@ -182,13 +182,13 @@ namespace Business
             var rows = await _roleRepository.SaveChangesAsync();
             if (rows != 1)
             {
-                return new RoleManagerResult()
+                return new AuthenticationResult()
                 {
                     Succeeded = false,
                     Errors = new List<string>() { "Error removing permission from role" }
                 };
             }
-            return new RoleManagerResult()
+            return new AuthenticationResult()
             {
                 Succeeded = true
             };

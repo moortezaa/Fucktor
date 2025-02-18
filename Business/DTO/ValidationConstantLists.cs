@@ -283,6 +283,8 @@ namespace Business.DTO
             new ("Zanzibar","255","24" ),
             new ("Zimbabwe","263","" ),
         };
+
+        //this Tuple is for IRAN, you might want to add your own.
         public static Tuple<string, int, int>[] validFirst5PostalCodeDigits =
         {
             new ("تبریز",51999,51331),

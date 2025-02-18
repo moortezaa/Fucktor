@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Business.DTO
 {
-    public class ChangeEmailResult : AuthenticationResult
+    public class BusinessResult
     {
-        public string? ConfirmationCode { get; set; }
+        public bool Succeeded { get; set; } = false;
+        public List<string> Errors { get; set; } = [];
     }
 }

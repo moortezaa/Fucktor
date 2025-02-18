@@ -1,0 +1,32 @@
+﻿<link rel="stylesheet" href="~/lib/ds-template-ui/table.css" />
+
+@{
+    ViewData["Title"] = SR["Invoice List"].Value;
+
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@{
+    var propertiesToShow = new List<string>()
+    {
+        nameof(Invoice.Number),
+        nameof(Invoice.Buyer),
+        nameof(Invoice.Seller),
+        nameof(Invoice.DateTime),
+        nameof(Invoice.Status),
+        nameof(Invoice.Total),
+    };
+}
+<table ds-model-type="typeof(Invoice)"
+       ds-controller="@nameof(InvoiceController).Replace("Controller","")"
+       ds-name="index"
+       ds-rows-per-page="10"
+       ds-post-columns="1"
+       ds-properties-to-show="propertiesToShow"></table>
+
+
+@section Scripts {
+    <script src="~/lib/ds-template-ui/table.js"></script>
+    <script src="~/lib/ds-template-ui/dropdown.js"></script>
+}

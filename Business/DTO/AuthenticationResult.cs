@@ -7,11 +7,8 @@ using System.Threading.Tasks;
 
 namespace Business.DTO
 {
-    public class AuthenticationResult
+    public class AuthenticationResult : BusinessResult
     {
-        public bool Succeeded { get; set; } = false;
-        public List<string> Errors { get; set; } = new List<string>();
-
         public AuthenticationResult()
         {
         }

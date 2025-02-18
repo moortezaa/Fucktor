@@ -14,13 +14,13 @@ namespace Business
             _permissionRepository = permissionRepository;
         }
 
-        public async Task<PermissionManagerResult> AddPermission(string permissionName, string? group = null)
+        public async Task<AuthenticationResult> AddPermission(string permissionName, string? group = null)
         {
             // Check if permission already exists
             var permission = await _permissionRepository.GetPermissionByTitle(permissionName);
             if (permission != null)
             {
-                return new PermissionManagerResult()
+                return new AuthenticationResult()
                 {
                     Succeeded = false,
                     Errors = new List<string>() { "Permission already exists" }
@@ -32,7 +32,7 @@ namespace Business
 
             if (errors.Any())
             {
-                return new PermissionManagerResult()
+                return new AuthenticationResult()
                 {
                     Succeeded = false,
                     Errors = errors
@@ -47,13 +47,13 @@ namespace Business
             var rows = await _permissionRepository.SaveChangesAsync();
             if (rows != 1)
             {
-                return new PermissionManagerResult()
+                return new AuthenticationResult()
                 {
                     Succeeded = false,
                     Errors = new List<string>() { "Error adding permission" }
                 };
             }
-            return new PermissionManagerResult()
+            return new AuthenticationResult()
             {
                 Succeeded = true
             };
@@ -91,20 +91,20 @@ namespace Business
             return errors;
         }
 
-        public async Task<PermissionManagerResult> DeletePermission(string permissionName)
+        public async Task<AuthenticationResult> DeletePermission(string permissionName)
         {
             var permission = await _permissionRepository.GetPermissionByTitle(permissionName) ?? throw new Exception("Permission not found");
             _permissionRepository.Remove(permission);
             var rows = await _permissionRepository.SaveChangesAsync();
             if (rows != 1)
             {
-                return new PermissionManagerResult()
+                return new AuthenticationResult()
                 {
                     Succeeded = false,
                     Errors = new List<string>() { "Error deleting permission" }
                 };
             }
-            return new PermissionManagerResult()
+            return new AuthenticationResult()
             {
                 Succeeded = true
             };

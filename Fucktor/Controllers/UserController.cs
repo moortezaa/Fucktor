@@ -462,7 +462,7 @@ namespace Fucktor.Controllers
             return Json(new
             {
                 success = true,
-                needPassword = false
+                needPassword = true
             });
         }
     }

@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace Business.DTO
 {
-    public class UserManagerResult
+    public class UserManagerResult : AuthenticationResult
     {
-        public bool Succeeded { get; set; } = false;
-        public List<string> Errors { get; set; } = new List<string>();
         public bool UserExist { get; set; }
         public Guid ExistingUserId { get; set; }
 
@@ -18,10 +16,6 @@ namespace Business.DTO
         {
         }
 
-        public UserManagerResult(IdentityResult result)
-        {
-            Succeeded = result.Succeeded;
-            Errors = result.Errors.Select(e => e.Description).ToList();
-        }
+        public UserManagerResult(IdentityResult identityResult) : base(identityResult) { }
     }
 }

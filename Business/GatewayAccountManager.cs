@@ -22,45 +22,45 @@ namespace Business
         }
 
 
-        public async Task<GatewayResult> AddGateway(GatewayAccount gatewayAccount)
+        public async Task<BusinessResult> AddGateway(GatewayAccount gatewayAccount)
         {
             _gatewayAccountRepository.Add(gatewayAccount);
             var result = await _gatewayAccountRepository.SaveChangesAsync();
             if (result == 1)
             {
-                return new GatewayResult()
+                return new BusinessResult()
                 {
                     Succeeded = true,
-                    Message = "Gateway account added"
+                    Errors = ["Gateway account added"]
                 };
             }
-            return new GatewayResult()
+            return new BusinessResult()
             {
                 Succeeded = false,
-                Message = "Failed to add gateway account"
+                Errors = ["Failed to add gateway account"]
             };
         }
 
-        public async Task<GatewayResult> UpdateGateway(GatewayAccount gatewayAccount)
+        public async Task<BusinessResult> UpdateGateway(GatewayAccount gatewayAccount)
         {
             _gatewayAccountRepository.Update(gatewayAccount);
             var result = await _gatewayAccountRepository.SaveChangesAsync();
             if (result == 1)
             {
-                return new GatewayResult()
+                return new BusinessResult()
                 {
                     Succeeded = true,
-                    Message = "Gateway account updated"
+                    Errors = ["Gateway account updated"]
                 };
             }
-            return new GatewayResult()
+            return new BusinessResult()
             {
                 Succeeded = false,
-                Message = "Failed to update gateway account"
+                Errors = ["Failed to update gateway account"]
             };
         }
 
-        public async Task<GatewayResult> DeleteGateway(Guid gatewayAccountId)
+        public async Task<BusinessResult> DeleteGateway(Guid gatewayAccountId)
         {
             var gatewayAccount = await _gatewayAccountRepository.GetByIdAsync(gatewayAccountId);
             if (gatewayAccount == null)
@@ -71,16 +71,16 @@ namespace Business
             var result = await _gatewayAccountRepository.SaveChangesAsync();
             if (result == 1)
             {
-                return new GatewayResult()
+                return new BusinessResult()
                 {
                     Succeeded = true,
-                    Message = "Gateway account removed"
+                    Errors = ["Gateway account removed"]
                 };
             }
-            return new GatewayResult()
+            return new BusinessResult()
             {
                 Succeeded = false,
-                Message = "Failed to remove gateway account"
+                Errors = ["Failed to remove gateway account"]
             };
         }
     }

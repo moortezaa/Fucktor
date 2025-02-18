@@ -1,0 +1,14 @@
+﻿@model Invoice
+
+<tr>
+    <td>@Model.Number</td>
+    <td>@Model.Buyer</td>
+    <td>@Model.Seller</td>
+    <td>@Model.DateTime</td>
+    <td>@Model.Status</td>
+    <td>@Model.Total</td>
+    <td>
+        <a asp-action="@nameof(InvoiceController.Detail)" asp-controller="@nameof(InvoiceController).RemoveController()" asp-route-id="@Model.Id" class="btn btn-warning">@SR["Details"]</a>
+        <a asp-action="@nameof(InvoiceController.Edit)" asp-controller="@nameof(InvoiceController).RemoveController()" asp-route-id="@Model.Id" class="btn btn-primary">@SR["Edit"]</a>
+    </td>
+</tr>

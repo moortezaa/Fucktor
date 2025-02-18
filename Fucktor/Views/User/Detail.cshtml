@@ -15,7 +15,6 @@
 
     <a asp-action="@nameof(UserController.Edit)" asp-controller="@nameof(UserController).RemoveController()" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fa-duotone fa-solid fa-pen-to-square"></i><span class="ps-2 pe-0">@SR["Edit"]</span></a>
     <a asp-action="@nameof(UserController.ChangePassword)" asp-controller="@nameof(UserController).RemoveController()" asp-route-id="@Model.Id" class="btn btn-warning"><i class="fa-duotone fa-solid fa-key"></i><span class="ps-2 pe-0">@SR["Change Password"]</span></a>
-    <a href="/api/GetDoctorVisits/?doctorPhone=@Model.PhoneNumber&doctorNationalCode=@Model.NationalCode&from={0}&to={1}" class="btn btn-info" target="_blank"><i class="fa-solid fa-webhook"></i><span class="ps-2 pe-0">API</span></a>
     @if (!Model.TwoFactorEnabled)
     {
         <form id="form-enable-twofactor" asp-action="@nameof(UserController.EnableTwoFactorAuthentication)" asp-controller="@nameof(UserController).RemoveController()" method="post">
