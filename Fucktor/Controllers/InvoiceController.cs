@@ -6,6 +6,8 @@ using DSTemplate_UI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Localization;
+using Fucktor.Attributes;
+using System.Threading.Tasks;
 
 namespace Fucktor.Controllers
 {
@@ -15,7 +17,7 @@ namespace Fucktor.Controllers
         private readonly IDSTableManager _dsTableManager = dsTableManager;
         private readonly IStringLocalizer<UserController> _localizer = localizer;
 
-        [Permission("GetUserTables", true)]
+        [Permission("GetInvoiceTables", true)]
         public async Task<JsonResult> DSGetTableData(string tableName, string sortPropertyName, bool? sortDesending, string filters, int page = 1, int rowsPerPage = 10, string routeValues = null)
         {
             if (tableName == "index")
@@ -49,7 +51,7 @@ namespace Fucktor.Controllers
             return Json("invalid table name");
         }
 
-        [Permission("GetUserTables", true)]
+        [Permission("GetInvoiceTables", true)]
         public async Task<JsonResult> DSGetTableDataCount(string tableName, string filters, string routeValues = null)
         {
             if (tableName == "index")
@@ -77,19 +79,42 @@ namespace Fucktor.Controllers
             return await _dsTableManager.Json(0, tableName);
         }
 
+        [Dashboard("note", Order = 2)]
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult Detail()
+        public async Task<IActionResult> Details(Guid id)
         {
-            return View();
+            var invoice = await _invoiceManager.GetInvoiceWithDetails(id);
+            return View(invoice);
         }
 
-        public IActionResult Edit()
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
         {
-            return View();
+            var invoice = await _invoiceManager.GetInvoiceById(id);
+            return View(invoice);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(Invoice invoice)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(invoice);
+            }
+            var result = await _invoiceManager.CreateOrUpdateInvoice(invoice);
+            if (result.Errors.Count != 0)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error);
+                }
+                return View(invoice);
+            }
+            return RedirectToAction(nameof(Details), new { id = invoice.Id });
         }
     }
 }

@@ -49,6 +49,7 @@ namespace Business
             services.AddScoped<AppRoleManager>();
             services.AddScoped<AppUserManager>();
             services.AddScoped<GatewayAccountManager>();
+            services.AddScoped<InvoiceManager>();
 
             //services.AddAuthentication()
             //    .AddIdentityCookies();
@@ -150,6 +151,33 @@ namespace Business
                         continue;
                     }
                     appRoleManager.AddPermissionToRole("Admin", model.Title).Wait();
+                }
+
+                // Check if the Seller role exists, then add it if it doesn't
+                var sellerRoleName = "Seller";
+                var sellerRole = appRoleManager.GetRoleByName(sellerRoleName).Result;
+                rolePermissions = [];
+                if (sellerRole == null)
+                {
+                    appRoleManager.AddRole(sellerRoleName).Wait();
+                }
+                else
+                {
+                    rolePermissions = appRoleManager.GetPermissionsForRole(sellerRole.Name!).Result;
+                }
+
+                // Add Seller Permissions
+                var sellerPermissions = new string[]
+                {
+                    ""
+                };
+                foreach (var permission in sellerPermissions)
+                {
+                    if (rolePermissions.Any(p => p.Title == permission))
+                    {
+                        continue;
+                    }
+                    appRoleManager.AddPermissionToRole(sellerRoleName, permission).Wait();
                 }
 
                 app.UseOnlinePayment();

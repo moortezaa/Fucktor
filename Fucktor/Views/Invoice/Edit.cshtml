@@ -1,0 +1,30 @@
+﻿@model Invoice
+@{
+    var currentUser = (AppUser)ViewData["CurrentUser"];
+}
+
+<form id="invoice-form" asp-action="@nameof(InvoiceController.Edit)" asp-controller="@nameof(InvoiceController).RemoveController()" method="post">
+    <input asp-for="Id" type="hidden" />
+    <input asp-for="SellerId" type="hidden" value="@currentUser.Id"/>
+    @*type*@
+    <select asp-for="Type" class="form-control">
+        @foreach (var type in Enum.GetValues(typeof(InvoiceType)))
+        {
+            <option value="@((int)type)">@type.ToLocalizedString(localizerFactory)</option>
+        }
+    </select>
+    @*if type is credit, debit, or recurring ask for a main invoice*@
+    <div class="collapse">
+
+    </div>
+
+    @*tax*@
+
+
+    @*buyer*@
+
+
+</form>
+@*after the above form is validated and submited user can add items to the invoice or if the invoice already exists and we want to edit the items*@
+@*in short, the invoice must exist before editing the items*@
+@*items*@

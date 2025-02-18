@@ -33,6 +33,7 @@
 
 <div class="d-flex flex-row mt-3">
     <button class="btn btn-outline-dark tab-button" data-bs-toggle="collapse" data-bs-target="#section-details"><i class="fa fa-info-circle"></i><span class="ps-2 pe-0">@SR["Details"]</span></button>
+    <button class="btn btn-outline-dark tab-button collapsed" data-bs-toggle="collapse" data-bs-target="#section-gateways"><i class="fa fa-money-bill"></i><span class="ps-2 pe-0">@SR["Gateway Accounts"]</span></button>
     @if (hasAccessToRoles)
     {
         <button class="btn btn-outline-dark tab-button collapsed" data-bs-toggle="collapse" data-bs-target="#section-roles"><i class="fa fa-users"></i><span class="ps-2 pe-0">@SR["Roles"]</span></button>
@@ -88,6 +89,60 @@
             </li>
         </ul>
     </div>
+    <div id="section-gateways" class="collapse col-12" data-bs-parent="#tab-body">
+        <h3>@SR["Gateway Accounts"]</h3>
+
+        <button class="btn btn-success" data-bs-toggle="collapse" data-bs-target="#gateway-account-form"><i class="fas fa-plus"></i> @SR["Add Gateway"]</button>
+        <div id="gateway-account-form" class="col-12 col-md-4 collapse">
+            <form asp-action="@nameof(GatewayAccountController.UpdateGatewayAccount)" asp-controller="@nameof(GatewayAccountController).RemoveController()" method="post">
+                <input type="hidden" name="Id" />
+                <input type="hidden" name="UserId" value="@Model.Id" />
+                <div class="mb-3">
+                    <label for="gateway-type" class="form-label">@SR["Gateway Type"]</label>
+                    @{
+                        var gateWayTypes = Enum.GetValues<GatewayType>().Select(e => new { Id = (int)e, Name = e.ToLocalizedString(localizerFactory) });
+                        var selectList = new SelectList(gateWayTypes, "Id", "Name", gateWayTypes.First());
+                    }
+                    <select id="gateway-type" name="Type" asp-items="selectList" class="form-select"></select>
+                </div>
+                <div id="rest-of-gateway-form">
+                    <div class="mb-3">
+                        <label for="gateway-name" class="form-label">@SR["Gateway Name"]</label>
+                        <input id="gateway-name" name="Name" class="form-control" type="text" value="سامان" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="gateway-MerchantId" class="form-label">@SR["Gateway MerchantId"]</label>
+                        <input id="gateway-MerchantId" name="MerchantId" class="form-control" type="text" />
+                    </div>
+                    @* <div class="mb-3">
+            <label for="gateway-AuthorizationToken" class="form-label">@SR["Gateway AuthorizationToken"]</label>
+            <input id="gateway-AuthorizationToken" name="AuthorizationToken" class="form-control" type="text" />
+            </div>
+            <div class="mb-3">
+            <label for="gateway-Password" class="form-label">@SR["Gateway Password"]</label>
+            <input id="gateway-Password" name="Password" class="form-control" type="text" />
+            </div> *@
+                </div>
+                <button id="save-custom-field" class="btn btn-primary"><i class="fa-solid fa-save"></i> @SR["Save"]</button>
+            </form>
+        </div>
+        @{
+            var gatewayAccountProperties = new List<string>
+        {
+        nameof(GatewayAccount.Name),
+        nameof(GatewayAccount.Type),
+        nameof(GatewayAccount.MerchantId),
+        };
+        }
+        <table ds-model-type="typeof(GatewayAccount)"
+               ds-controller="@nameof(GatewayAccountController).Replace("Controller","")"
+               ds-name="gateway-accounts"
+               ds-rows-per-page="10"
+               ds-pre-columns="1"
+               ds-post-columns="1"
+               ds-properties-to-show="gatewayAccountProperties"
+               ds-route-values="@(new []{new KeyValuePair<string,object>("userId",Model.Id)})"></table>
+    </div>
     @if (hasAccessToRoles)
     {
         <div id="section-roles" class="collapse col-12" data-bs-parent="#tab-body">
@@ -109,7 +164,7 @@
                 <input type="hidden" name="userId" value="@Model.Id" />
                 @{
                     var roles = (List<AppRole>)ViewData["AvailableRoles"];
-                    var selectList = new SelectList(roles, "Id", "Name");
+                    selectList = new SelectList(roles, "Id", "Name");
                 }
                 <div class="row">
                     <div class="col-auto">
