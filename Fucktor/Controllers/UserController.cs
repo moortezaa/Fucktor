@@ -108,6 +108,33 @@ namespace Fucktor.Controllers
         }
 
         [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(UserRegisterViewModel model)
+        {
+            var result = await _appUserManager.AddUser(model.UserName, model.Password);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error);
+                }
+                return View(model);
+            }
+            result = await _appUserManager.UpdateUser(model);
+            if (result.Succeeded)
+            {
+                return RedirectToAction(nameof(HomeController.Index), nameof(HomeController).RemoveController(), null);
+            }
+            ModelState.AddModelError("", _localizer["Error registering new user please try again in a week."]);
+            return View(model);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> SignIn(string returnUrl)
         {
             var model = new SignInViewModel()

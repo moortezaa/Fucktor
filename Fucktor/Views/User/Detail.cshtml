@@ -164,7 +164,7 @@
                 <input type="hidden" name="userId" value="@Model.Id" />
                 @{
                     var roles = (List<AppRole>)ViewData["AvailableRoles"];
-                    selectList = new SelectList(roles, "Id", "Name");
+                    var selectList = new SelectList(roles, "Id", "Name");
                 }
                 <div class="row">
                     <div class="col-auto">

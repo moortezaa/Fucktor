@@ -17,6 +17,7 @@ namespace Core
         public string? RegistrationNumber { get; set; }
 
         public Gender Gender { get; set; } = Gender.NotSet;
+        public LegalPersonType LegalPersonType { get; set; } = LegalPersonType.NaturalPerson;
 
 
         public List<GatewayAccount> GatewayAccounts { get; set; } = new List<GatewayAccount>();

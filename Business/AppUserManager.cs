@@ -398,6 +398,25 @@ namespace Business
             };
         }
 
+
+        public async Task<AuthenticationResult> UpdateUser(AppUser model)
+        {
+            _appUserRepository.Update(model);
+            var rows = await _appUserRepository.SaveChangesAsync();
+            if (rows > 0)
+            {
+                return new AuthenticationResult()
+                {
+                    Succeeded = true,
+                };
+            }
+            return new AuthenticationResult()
+            {
+                Succeeded = false,
+                Errors = ["no rows affected."]
+            };
+        }
+
         public async Task<string> GetPhoneNumberVerificationCode(Guid userId, string phoneNumber)
         {
             var user = await GetUserById(userId) ?? throw new KeyNotFoundException("User Not Found");
