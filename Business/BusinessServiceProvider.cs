@@ -49,6 +49,7 @@ namespace Business
             services.AddScoped<AppRoleManager>();
             services.AddScoped<AppUserManager>();
             services.AddScoped<GatewayAccountManager>();
+            services.AddScoped<InvoiceManager>();
 
             //services.AddAuthentication()
             //    .AddIdentityCookies();

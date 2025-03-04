@@ -3,7 +3,7 @@
 
     public class DashboardItem
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Id { get; set; } = string.Empty;
         public string Display { get; set; } = string.Empty;
         public int Order { get; set; }
         public List<DashboardItem> Childs { get; set; } = new List<DashboardItem>();

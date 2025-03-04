@@ -1,0 +1,74 @@
+﻿@model Invoice
+@{
+    ViewData["Title"] = SR["Invoice Edit"].Value;
+
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="@nameof(InvoiceController.Edit)" asp-controller="@nameof(InvoiceController).RemoveController()" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <input asp-for="Id" type="hidden" />
+    <div class="row mt-3">
+        <div class="form-group col-12 col-md-3">
+            <label for="Number">@Model.DisplayNameFor(x => x.Number, localizerFactory)</label>
+            <input asp-for="Number" class="form-control" />
+            <span asp-validation-for="Number" class="text-danger"></span>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label for="DateTime">@Model.DisplayNameFor(x => x.DateTime, localizerFactory)</label>
+            <input asp-for="DateTime" class="form-control" />
+            <span asp-validation-for="DateTime" class="text-danger"></span>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label for="Type" class="control-label">@Model.DisplayNameFor(x => x.Type, localizerFactory)</label>
+            <select asp-for="Type" class="form-control">
+                @foreach (var invoiceType in Enum.GetValues(typeof(InvoiceType)))
+                {
+                    <option value="@((int)invoiceType)">@invoiceType.ToLocalizedString(localizerFactory)</option>
+                }
+            </select>
+            <span asp-validation-for="Type" class="text-danger"></span>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label for="Tax">@Model.DisplayNameFor(x => x.Tax, localizerFactory)</label>
+            <input asp-for="Tax" class="form-control" />
+            <span asp-validation-for="Tax" class="text-danger"></span>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label for="MainInvoiceId" class="control-label">@Model.DisplayNameFor(x => x.MainInvoiceId, localizerFactory)</label>
+            <select asp-for="MainInvoiceId" class="form-control">
+                @foreach (var invoice in (Invoice[]?)ViewData["PosibleMainInvoices"]??Array.Empty<Invoice>())
+                {
+                    <option value="@((int)invoice)">@invoice.ToLocalizedString(localizerFactory)</option>
+                }
+            </select>
+            <span asp-validation-for="Gender" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="form-group col-12 col-md-3">
+            <label for="NationalCode">@Model.DisplayNameFor(x => x.NationalCode, localizerFactory)</label>
+            <input asp-for="NationalCode" class="form-control" />
+            <span asp-validation-for="NationalCode" class="text-danger"></span>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label for="PhoneNumber">@Model.DisplayNameFor(x => x.PhoneNumber, localizerFactory)</label>
+            <input asp-for="PhoneNumber" class="form-control" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="form-group col-12 col-md-3">
+            <label for="Email">@Model.DisplayNameFor(x => x.Email, localizerFactory)</label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-2">
+            <button type="submit" class="btn btn-primary">@SR["Save"]</button>
+        </div>
+    </div>
+</form>

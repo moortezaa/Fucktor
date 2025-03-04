@@ -45,6 +45,7 @@ namespace Fucktor.Controllers
                     var dashboardAttribute = dashboardAttributes[i];
                     var dashboardItem = new DashboardItem()
                     {
+                        Id = MakeId(controller.Name.Replace("Controller", "") + "." + dashboardAttribute.Name),
                         Display = _localizer[controller.Name.Replace("Controller", "") + "." + dashboardAttribute.Name].Value,
                         Icon = dashboardAttribute.Attribute.Icon,
                         Link = Url.Action(dashboardAttribute.Name, controller.Name.Replace("Controller", "")) ?? "",
@@ -54,7 +55,7 @@ namespace Fucktor.Controllers
                     var insertIndex = 0;
                     if (dashboardAttribute.Attribute.ParentAction != null)
                     {
-                        var parent = dashboardItems.Where(d => d.Display == controller.Name.Replace("Controller", "") + "." + dashboardAttribute.Attribute.ParentAction).SingleOrDefault();
+                        var parent = dashboardItems.Where(d => d.Id == MakeId(controller.Name.Replace("Controller", "") + "." + dashboardAttribute.Attribute.ParentAction)).SingleOrDefault();
                         if (parent == null)
                         {
                             var parentAttribute = dashboardAttributes.Where(a => a.Name == dashboardAttribute.Attribute.ParentAction).SingleOrDefault()
@@ -62,6 +63,7 @@ namespace Fucktor.Controllers
                             dashboardAttributes.Remove(parentAttribute);
                             parent = new DashboardItem()
                             {
+                                Id=MakeId(controller.Name.Replace("Controller", "") + "." + parentAttribute.Name),
                                 Display = _localizer[controller.Name.Replace("Controller", "") + "." + parentAttribute.Name].Value,
                                 Icon = parentAttribute.Attribute.Icon,
                                 Link = Url.Action(parentAttribute.Name, controller.Name.Replace("Controller", "")) ?? "",
@@ -81,6 +83,11 @@ namespace Fucktor.Controllers
                 }
             }
             return Json(dashboardItems);
+        }
+
+        private string MakeId(string v)
+        {
+            return v.Replace('.', '-');
         }
 
         private static int FindIndex(List<DashboardItem> dashboardItems, DashboardItem itemToBeFound)

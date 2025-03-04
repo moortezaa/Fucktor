@@ -6,6 +6,7 @@ using DSTemplate_UI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Localization;
+using Fucktor.Attributes;
 
 namespace Fucktor.Controllers
 {
@@ -77,19 +78,42 @@ namespace Fucktor.Controllers
             return await _dsTableManager.Json(0, tableName);
         }
 
+        [Dashboard("file-invoice")]
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult Detail()
+        public async Task<IActionResult> Detail(Guid id)
+        {
+            return View(await _invoiceManager.GetInvoiceDetails(id));
+        }
+
+        [HttpGet]
+        [Dashboard("file-invoice", Order = 1, ParentAction = nameof(Index))]
+        public IActionResult Edit()
         {
             return View();
         }
 
-        public IActionResult Edit()
+        [HttpPost]
+        public async Task<IActionResult> Edit(Invoice model)
         {
-            return View();
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var result = await _invoiceManager.UpdateInvoice(model);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error);
+                }
+            }
+
+            return RedirectToAction(nameof(Detail), new { model.Id });
         }
     }
 }

@@ -117,7 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Invoice Edit" xml:space="preserve">
-    <value>ویرایش فاکتور</value>
+  <data name="Home.Index" xml:space="preserve">
+    <value>داشبورد</value>
+  </data>
+  <data name="Invoice.Edit" xml:space="preserve">
+    <value>ایجاد فاکتور جدید</value>
+  </data>
+  <data name="Invoice.Index" xml:space="preserve">
+    <value>فاکتور ها</value>
+  </data>
+  <data name="User.Index" xml:space="preserve">
+    <value>کاربران</value>
   </data>
 </root>
