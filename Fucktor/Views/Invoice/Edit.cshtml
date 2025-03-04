@@ -22,9 +22,9 @@
         </div>
         <div class="form-group col-12 col-md-3">
             <label for="Type" class="control-label">@Model.DisplayNameFor(x => x.Type, localizerFactory)</label>
-            <select asp-for="Type" class="form-control">
+    <select asp-for="Type" class="form-control">
                 @foreach (var invoiceType in Enum.GetValues(typeof(InvoiceType)))
-                {
+        {
                     <option value="@((int)invoiceType)">@invoiceType.ToLocalizedString(localizerFactory)</option>
                 }
             </select>
@@ -41,8 +41,8 @@
                 @foreach (var invoice in (Invoice[]?)ViewData["PosibleMainInvoices"]??Array.Empty<Invoice>())
                 {
                     <option value="@((int)invoice)">@invoice.ToLocalizedString(localizerFactory)</option>
-                }
-            </select>
+        }
+    </select>
             <span asp-validation-for="Gender" class="text-danger"></span>
         </div>
     </div>
@@ -71,4 +71,14 @@
             <button type="submit" class="btn btn-primary">@SR["Save"]</button>
         </div>
     </div>
+
+    @*tax*@
+
+
+    @*buyer*@
+
+
 </form>
+@*after the above form is validated and submited user can add items to the invoice or if the invoice already exists and we want to edit the items*@
+@*in short, the invoice must exist before editing the items*@
+@*items*@

@@ -11,5 +11,10 @@ namespace Repository
         }
 
         public IQueryable<Item> ItemQuery { get => _context.Items; }
+
+        public async Task<List<Item>> GetUserItems(Guid userId)
+        {
+            return await _context.Items.Where(i => i.Sellers.Any(s => s.UserId == userId)).ToListAsync();
+        }
     }
 }

@@ -1,0 +1,15 @@
+﻿@model GatewayAccount
+
+<tr>
+    <td>@ViewData["Row"]</td>
+    <td>@Model.Name</td>
+    <td>@Model.Type.ToLocalizedString(localizerFactory)</td>
+    <td>@Model.MerchantId</td>
+    <td>
+        <form class="form-gateway-account-delete d-inline" asp-action="@nameof(GatewayAccountController.DeleteGatewayAccount)" asp-controller="@nameof(GatewayAccountController).RemoveController()" method="post">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> @SR["Delete"]</button>
+        </form>
+        <button class="btn btn-primary btn-sm btn-edit-gateway-account" data-model="@Html.Encode(Json.Serialize(new { Model.Id, Model.Type, Model.Name, Model.MerchantId }))"><i class="fas fa-pen"></i>@SR["Edit"]</button>
+    </td>
+</tr>
