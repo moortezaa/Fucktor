@@ -120,7 +120,10 @@ namespace Business
                 // Check if the admin user exists, then add them if they don't
                 if (appUserManager.GetUserByUserName("admin").Result == null)
                 {
-                    appUserManager.AddUser("admin", "M.amini@1378").Wait();
+                    appUserManager.AddUser(new AppUser()
+                    {
+                        UserName = "admin",
+                    }, "M.amini@1378").Wait();
                 }
                 var admin = appUserManager.GetUserByUserName("admin").Result!;
                 //reset admin password
@@ -169,7 +172,9 @@ namespace Business
                 // Add Seller Permissions
                 var sellerPermissions = new string[]
                 {
-                    ""
+                    "ViewHome",
+                    "UseDashboard",
+                    "GetInvoiceTable",
                 };
                 foreach (var permission in sellerPermissions)
                 {

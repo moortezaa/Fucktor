@@ -27,24 +27,28 @@ namespace Business
             _localizer = localizer;
         }
 
-        public async Task<AuthenticationResult> AddUser(string userName, string password)
+        public async Task<AuthenticationResult> AddUser(AppUser user, string password)
         {
             var errors = new List<string>();
 
             //validating Username
-            if (userName.Length < 3)
+            if (string.IsNullOrWhiteSpace(user.UserName))
+            {
+                errors.Add(_localizer["The Username field is required."].Value);
+            }
+            else if (await GetUserByUserName(user.UserName) != null)
+            {
+                errors.Add(_localizer["UserName already taken."].Value);
+            }
+            else if (user.UserName.Length < 3)
             {
                 errors.Add(_localizer["Username must be more than 2 characters."].Value);
             }
-            else if (userName.Length > 20)
+            else if (user.UserName.Length > 20)
             {
                 errors.Add(_localizer["Username must be less than 21 characters."].Value);
             }
 
-            var user = new AppUser()
-            {
-                UserName = userName,
-            };
             var result = await _userManager.CreateAsync(user, password);
 
 

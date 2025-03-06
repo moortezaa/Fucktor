@@ -17,14 +17,12 @@ namespace Fucktor.Controllers
 {
     public class UserController : BaseController, IDSTableController
     {
-        private readonly AppUserManager _appUserManager;
         private readonly AppRoleManager _appRoleManager;
         private readonly IDSTableManager _dsTableManager;
         private readonly IStringLocalizer<UserController> _localizer;
 
-        public UserController(IServiceProvider serviceProvider, AppUserManager appUserManager, IDSTableManager dsTableManager, AppRoleManager appRoleManager, IStringLocalizer<UserController> localizer) : base(serviceProvider)
+        public UserController(IServiceProvider serviceProvider, IDSTableManager dsTableManager, AppRoleManager appRoleManager, IStringLocalizer<UserController> localizer) : base(serviceProvider)
         {
-            _appUserManager = appUserManager;
             _dsTableManager = dsTableManager;
             _appRoleManager = appRoleManager;
             _localizer = localizer;
@@ -108,6 +106,7 @@ namespace Fucktor.Controllers
         }
 
         [HttpGet]
+        [Dashboard("user-plus", Order = 1, ParentAction = nameof(Index))]
         public IActionResult Register()
         {
             return View();
@@ -116,7 +115,11 @@ namespace Fucktor.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(UserRegisterViewModel model)
         {
-            var result = await _appUserManager.AddUser(model.UserName, model.Password);
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var result = await _appUserManager.AddUser(model, model.Password);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -125,13 +128,8 @@ namespace Fucktor.Controllers
                 }
                 return View(model);
             }
-            result = await _appUserManager.UpdateUser(model);
-            if (result.Succeeded)
-            {
-                return RedirectToAction(nameof(HomeController.Index), nameof(HomeController).RemoveController(), null);
-            }
-            ModelState.AddModelError("", _localizer["Error registering new user please try again in a week."]);
-            return View(model);
+            await _appUserManager.AddUserToRole(model.Id, "Seller");
+            return RedirectToAction(nameof(HomeController.Index), nameof(HomeController).RemoveController(), null);
         }
 
         [HttpGet]
@@ -218,7 +216,7 @@ namespace Fucktor.Controllers
         [Permission("EditUser", true)]
         public async Task<IActionResult> Edit(Guid id)
         {
-            if (!await _appUsermanager.IsInRole(CurrentUser.Id, "Admin") && id != CurrentUser.Id)
+            if (!await _appUserManager.IsInRole(CurrentUser.Id, "Admin") && id != CurrentUser.Id)
             {
                 return RedirectToAction(nameof(AccessDenied));
             }
@@ -234,7 +232,7 @@ namespace Fucktor.Controllers
         [Permission("EditUser", true)]
         public async Task<IActionResult> Edit(AppUser model)
         {
-            if (!await _appUsermanager.IsInRole(CurrentUser.Id, "Admin") && model.Id != CurrentUser.Id)
+            if (!await _appUserManager.IsInRole(CurrentUser.Id, "Admin") && model.Id != CurrentUser.Id)
             {
                 return AccessDenied();
             }
@@ -370,7 +368,7 @@ namespace Fucktor.Controllers
         public async Task<IActionResult> ChangePassword(Guid id)
         {
             var user = await _appUserManager.GetUserById(id);
-            if (await _appUsermanager.IsInRole(CurrentUser.Id, "Admin") || id == CurrentUser.Id)
+            if (await _appUserManager.IsInRole(CurrentUser.Id, "Admin") || id == CurrentUser.Id)
             {
                 if (user != null)
                 {
@@ -390,7 +388,7 @@ namespace Fucktor.Controllers
             var user = await _appUserManager.GetUserById(model.Id);
             if (user != null)
             {
-                if (await _appUsermanager.IsInRole(CurrentUser.Id, "Admin") || model.Id == CurrentUser.Id)
+                if (await _appUserManager.IsInRole(CurrentUser.Id, "Admin") || model.Id == CurrentUser.Id)
                 {
                     if (model.NewPassword != model.ConfirmPassword)
                     {

@@ -1,12 +1,17 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Core
 {
     public class AppUser : IdentityUser<Guid>
     {
+        [Required]
         public string? Name { get; set; }
+
+        [Required]
         public string? LastName { get; set; }
+
         public string? NationalCode { get; set; }
         public string? DisplayName { get; set; }
         public string? Address { get; set; }

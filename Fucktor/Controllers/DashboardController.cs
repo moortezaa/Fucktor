@@ -36,7 +36,7 @@ namespace Fucktor.Controllers
 
                     if (permissionAttribute != null)
                     {
-                        if (!await _appUsermanager.HasPermission(CurrentUser.Id,permissionAttribute.Permission))
+                        if (!await _appUserManager.HasPermission(CurrentUser.Id,permissionAttribute.Permission))
                         {
                             continue;
                         }

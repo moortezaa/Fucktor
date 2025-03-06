@@ -12,12 +12,12 @@ namespace Fucktor.Controllers
 {
     public class BaseController : Controller
     {
-        internal readonly AppUserManager _appUsermanager;
+        internal readonly AppUserManager _appUserManager;
         public CultureInfo Culture { get; set; }
 
         public BaseController(IServiceProvider serviceProvider)
         {
-            _appUsermanager = serviceProvider.GetRequiredService<AppUserManager>();
+            _appUserManager = serviceProvider.GetRequiredService<AppUserManager>();
         }
 
         public AppUser? CurrentUser { get; set; }
@@ -31,7 +31,7 @@ namespace Fucktor.Controllers
             var currentUserId = context.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (currentUserId != null)
             {
-                CurrentUser = await _appUsermanager.GetUserById(Guid.Parse(currentUserId));
+                CurrentUser = await _appUserManager.GetUserById(Guid.Parse(currentUserId));
                 ViewData["CurrentUser"] = CurrentUser;
             }
 
@@ -56,7 +56,7 @@ namespace Fucktor.Controllers
                 }
 
                 //if the user does not have the required permission then redirect to access denied page
-                if (!await _appUsermanager.HasPermission(CurrentUser.Id, permissionAttribute.Permission))
+                if (!await _appUserManager.HasPermission(CurrentUser.Id, permissionAttribute.Permission))
                 {
                     context.Result = RedirectToAction(nameof(UserController.AccessDenied),nameof(UserController).RemoveController());
                     return;
