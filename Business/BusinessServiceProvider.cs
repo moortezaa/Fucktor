@@ -123,6 +123,8 @@ namespace Business
                     appUserManager.AddUser(new AppUser()
                     {
                         UserName = "admin",
+                        Name = "Morteza",
+                        LastName = "Amini"
                     }, "M.amini@1378").Wait();
                 }
                 var admin = appUserManager.GetUserByUserName("admin").Result!;
