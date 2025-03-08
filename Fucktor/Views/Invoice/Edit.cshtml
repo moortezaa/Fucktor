@@ -49,7 +49,7 @@
     <div class="row mt-3">
         <div class="form-group col-12 col-md-3">
             <label for="BuyerId">@Model.DisplayNameFor(x => x.BuyerId, localizerFactory)</label>
-            <input asp-for="BuyerId" class="form-control" />
+            <select ds-model-type="@typeof(AppUser)" ds-controller="@nameof(UserController).RemoveController()" ds-name="buyer-select"></select>
             <span asp-validation-for="BuyerId" class="text-danger"></span>
         </div>
     </div>

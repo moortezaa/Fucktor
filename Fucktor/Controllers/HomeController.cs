@@ -13,7 +13,7 @@ namespace Fucktor.Controllers
         }
 
         [Permission("ViewHome", true)]
-        [Dashboard("home", Order = 1)]
+        [Dashboard("home", Order = 0)]
         public IActionResult Index()
         {
             return View();

@@ -98,7 +98,7 @@ namespace Fucktor.Controllers
         }
 
         [HttpGet]
-        [Dashboard("users", Order = 0)]
+        [Dashboard("users", Order = 1)]
         [Permission("ViewUsers", true)]
         public IActionResult Index()
         {
@@ -129,6 +129,34 @@ namespace Fucktor.Controllers
                 return View(model);
             }
             await _appUserManager.AddUserToRole(model.Id, "Seller");
+            return RedirectToAction(nameof(HomeController.Index), nameof(HomeController).RemoveController(), null);
+        }
+
+        [HttpGet]
+        [Permission("RegisterOtherUsers", true)]
+        public IActionResult RegisterBuyer()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Permission("RegisterOtherUsers", true)]
+        public async Task<IActionResult> RegisterBuyer(AppUser model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var result = await _appUserManager.AddOtherUser(model);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error);
+                }
+                return View(model);
+            }
+            await _appUserManager.AddUserToRole(model.Id, "Buyer");
             return RedirectToAction(nameof(HomeController.Index), nameof(HomeController).RemoveController(), null);
         }
 

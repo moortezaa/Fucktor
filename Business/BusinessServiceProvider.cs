@@ -175,6 +175,11 @@ namespace Business
                     "ViewHome",
                     "UseDashboard",
                     "GetInvoiceTable",
+                    "EditUser",
+                    "ViewUserDetail",
+                    "VerifyPhoneNumber",
+                    "ChangePassword",
+                    "EnableTwoFactor",
                 };
                 foreach (var permission in sellerPermissions)
                 {
@@ -183,6 +188,40 @@ namespace Business
                         continue;
                     }
                     appRoleManager.AddPermissionToRole(sellerRoleName, permission).Wait();
+                }
+                
+                // Check if the Seller role exists, then add it if it doesn't
+                var buyerRoleName = "Seller";
+                var buyerRole = appRoleManager.GetRoleByName(buyerRoleName).Result;
+                rolePermissions = [];
+                if (buyerRole == null)
+                {
+                    appRoleManager.AddRole(buyerRoleName).Wait();
+                }
+                else
+                {
+                    rolePermissions = appRoleManager.GetPermissionsForRole(buyerRole.Name!).Result;
+                }
+
+                // Add Seller Permissions
+                var buyerPermissions = new string[]
+                {
+                    "ViewHome",
+                    "UseDashboard",
+                    "GetInvoiceTable",
+                    "EditUser",
+                    "ViewUserDetail",
+                    "VerifyPhoneNumber",
+                    "ChangePassword",
+                    "EnableTwoFactor",
+                };
+                foreach (var permission in buyerPermissions)
+                {
+                    if (rolePermissions.Any(p => p.Title == permission))
+                    {
+                        continue;
+                    }
+                    appRoleManager.AddPermissionToRole(buyerRoleName, permission).Wait();
                 }
 
                 app.UseOnlinePayment();

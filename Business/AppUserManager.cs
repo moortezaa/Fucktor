@@ -484,5 +484,23 @@ namespace Business
         {
             return await _appUserRepository.GetUserByPhoneNumberAndNationalCode(doctorPhone, doctorNationalCode);
         }
+
+        public async Task<AuthenticationResult> AddOtherUser(AppUser model)
+        {
+            _appUserRepository.Add(model);
+            var rows = await _appUserRepository.SaveChangesAsync();
+            if (rows>0)
+            {
+                return new AuthenticationResult()
+                {
+                    Succeeded = true,
+                };
+            }
+            return new AuthenticationResult()
+            {
+                Succeeded = false,
+                Errors = [_localizer["No rows Affected"].Value]
+            };
+        }
     }
 }

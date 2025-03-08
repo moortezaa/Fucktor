@@ -1,0 +1,99 @@
+﻿@model AppUser
+
+@{
+    Layout = "_LayoutNoDashboard";
+}
+
+<form asp-action="@nameof(UserController.Register)" asp-controller="@nameof(UserController).RemoveController()" method="post">
+    <div class="row">
+        <div class="col-12">
+            <div asp-validation-summary="All" class="text-danger"></div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12 col-md-4">
+            <label asp-for="Name" class="form-label"></label> <span class="text-danger">*</span>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-4">
+            <label asp-for="LastName" class="form-label"></label> <span class="text-danger">*</span>
+            <input asp-for="LastName" class="form-control" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12 col-md-4">
+            <label asp-for="Address" class="form-label"></label>
+            <input asp-for="Address" class="form-control" />
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+        <div class="col-12 col-md-4">
+            <label asp-for="PostalCode" class="form-label"></label>
+            <input asp-for="PostalCode" class="form-control" type="number" />
+            <span asp-validation-for="PostalCode" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12 col-md-4">
+            <label asp-for="LegalPersonType" class="form-label"></label>
+            <select asp-for="LegalPersonType" class="form-select">
+                @foreach (var lType in Enum.GetValues(typeof(LegalPersonType)))
+                {
+                    <option value="@((int)lType)">@lType.ToLocalizedString(localizerFactory)</option>
+                }
+            </select>
+            <span asp-validation-for="LegalPersonType" class="text-danger"></span>
+        </div>
+    </div>
+    <div id="natural-person-form" class="collapse show mt-3">
+        <div class="row mt-3">
+            <div class="col-12 col-md-4">
+                <label asp-for="NationalCode" class="form-label"></label>
+                <input asp-for="NationalCode" class="form-control" type="number" />
+                <span asp-validation-for="NationalCode" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div id="legal-entity-form" class="collapse">
+        <div class="row mt-3">
+            <div class="col-12 col-md-4">
+                <label asp-for="CompanyName" class="form-label"></label>
+                <input asp-for="CompanyName" class="form-control" type="number" />
+                <span asp-validation-for="CompanyName" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12 col-md-4">
+                <label asp-for="EconomicCode" class="form-label"></label>
+                <input asp-for="EconomicCode" class="form-control" type="number" />
+                <span asp-validation-for="EconomicCode" class="text-danger"></span>
+            </div>
+            <div class="col-12 col-md-4">
+                <label asp-for="RegistrationNumber" class="form-label"></label>
+                <input asp-for="RegistrationNumber" class="form-control" type="number" />
+                <span asp-validation-for="RegistrationNumber" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12">
+            <input type="submit" value="@SR["Submit"].Value" class="btn btn-success" />
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        $('#LegalPersonType').on('change',()=>{
+            if($('#LegalPersonType').val()==@((int)LegalPersonType.NaturalPerson)){
+                $('#natural-person-form').collapse("show")
+                $('#legal-entity-form').collapse("hide")
+            }
+            if($('#LegalPersonType').val()==@((int)LegalPersonType.LegalEntity)){
+                $('#legal-entity-form').collapse("show")
+                $('#natural-person-form').collapse("hide")
+            }
+        })
+    </script>
+}

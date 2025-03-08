@@ -78,7 +78,7 @@ namespace Fucktor.Controllers
             return await _dsTableManager.Json(0, tableName);
         }
 
-        [Dashboard("file-invoice")]
+        [Dashboard("file-invoice", Order = 1)]
         public IActionResult Index()
         {
             return View();
