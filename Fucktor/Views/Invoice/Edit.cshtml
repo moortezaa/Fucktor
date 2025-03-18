@@ -37,22 +37,19 @@
         </div>
         <div class="form-group col-12 col-md-3">
             <label for="MainInvoiceId" class="control-label">@Model.DisplayNameFor(x => x.MainInvoiceId, localizerFactory)</label>
-            <select asp-for="MainInvoiceId" class="form-control">
-                @foreach (var invoice in (Invoice[]?)ViewData["PosibleMainInvoices"] ?? Array.Empty<Invoice>())
-                {
-                    <option value="@(invoice.Id)">@invoice.Buyer?.Name @invoice.Buyer?.LastName @invoice.Number</option>
-                }
-            </select>
+            <select asp-for="MainInvoiceId" ds-controller="@nameof(InvoiceController).RemoveController()" ds-model-type="@typeof(Invoice)" ds-name="main-invoice-select"></select>
             <span asp-validation-for="MainInvoiceId" class="text-danger"></span>
         </div>
     </div>
     <div class="row mt-3">
         <div class="form-group col-12 col-md-3">
             <label for="BuyerId">@Model.DisplayNameFor(x => x.BuyerId, localizerFactory)</label>
-            <select ds-model-type="@typeof(AppUser)" ds-controller="@nameof(UserController).RemoveController()" ds-name="buyer-select"></select>
+            <select asp-for="BuyerId" ds-controller="@nameof(InvoiceController).RemoveController()" ds-model-type="@typeof(AppUser)" ds-name="buyer-select"></select>
             <span asp-validation-for="BuyerId" class="text-danger"></span>
         </div>
     </div>
+
+
 
     <div class="row mt-3">
         <div class="col-2">
@@ -60,6 +57,3 @@
         </div>
     </div>
 </form>
-@*after the above form is validated and submited user can add items to the invoice or if the invoice already exists and we want to edit the items*@
-@*in short, the invoice must exist before editing the items*@
-@*items*@

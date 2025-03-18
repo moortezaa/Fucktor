@@ -12,15 +12,11 @@ namespace Business
     public class InvoiceManager(IInvoiceRepository invoiceRepository)
     {
         private readonly IInvoiceRepository _invoiceRepository = invoiceRepository;
+        public readonly IQueryable<Invoice> InvoiceQuery = invoiceRepository.InvoiceQuery;
 
         public async Task<Invoice?> GetInvoiceDetails(Guid id)
         {
             return await _invoiceRepository.GetByIdAsync(id);
-        }
-
-        public async Task<IQueryable<Invoice>> GetInvoiceQuery()
-        {
-            return _invoiceRepository.InvoiceQuery;
         }
 
         public async Task<BusinessResult> UpdateInvoice(Invoice model)

@@ -17,7 +17,7 @@ namespace Core
         public decimal Tax { get; set; }
         public decimal Total { get; set; }
 
-        public Guid MainInvoiceId { get; set; }
+        public Guid? MainInvoiceId { get; set; }
         public Invoice? MainInvoice { get; set; }
 
         public Guid SellerId { get; set; }

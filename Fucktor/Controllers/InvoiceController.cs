@@ -7,13 +7,16 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Localization;
 using Fucktor.Attributes;
+using Microsoft.EntityFrameworkCore;
 
 namespace Fucktor.Controllers
 {
-    public class InvoiceController(IServiceProvider serviceProvider, InvoiceManager invoiceManager, IDSTableManager dsTableManager, IStringLocalizer<UserController> localizer) : BaseController(serviceProvider), IDSTableController
+    public class InvoiceController(IServiceProvider serviceProvider, InvoiceManager invoiceManager, IDSTableManager dsTableManager, IStringLocalizer<UserController> localizer, IDSSelectManager dsSelectManager)
+        : BaseController(serviceProvider), IDSTableController, IDSSelectController
     {
         private readonly InvoiceManager _invoiceManager = invoiceManager;
         private readonly IDSTableManager _dsTableManager = dsTableManager;
+        private readonly IDSSelectManager _dsSelectManager = dsSelectManager;
         private readonly IStringLocalizer<UserController> _localizer = localizer;
 
         [Permission("GetInvoiceTable", true)]
@@ -21,7 +24,7 @@ namespace Fucktor.Controllers
         {
             if (tableName == "index")
             {
-                var invoices = await _invoiceManager.GetInvoiceQuery();
+                var invoices = _invoiceManager.InvoiceQuery;
 
                 if (!string.IsNullOrEmpty(filters))
                 {
@@ -56,7 +59,7 @@ namespace Fucktor.Controllers
             if (tableName == "index")
             {
 
-                var invoices = await _invoiceManager.GetInvoiceQuery();
+                var invoices = _invoiceManager.InvoiceQuery;
 
                 if (!string.IsNullOrEmpty(filters))
                 {
@@ -114,6 +117,28 @@ namespace Fucktor.Controllers
             }
 
             return RedirectToAction(nameof(Detail), new { model.Id });
+        }
+
+        public async Task<JsonResult> DSGetSelectData(string selectName, string filter, string routeValues = null)
+        {
+            if (selectName == "buyer-select")
+            {
+                var filtered = await _appUserManager.AppUserQuery.Where(u => u.Name.Contains(filter) || u.LastName.Contains(filter) || u.PhoneNumber.Contains(filter)).ToListAsync();
+                return await _dsSelectManager.Json(selectName, filtered, nameof(AppUser.Id), nameof(AppUser.DisplayName));
+            }
+            else if (selectName == "main-invoice-select")
+            {
+                var filtered = await _invoiceManager.InvoiceQuery.Where(i => i.SellerId == CurrentUser.Id && (i.Number.ToString().Contains(filter)
+                || i.Buyer.Name.Contains(filter)
+                || i.Buyer.LastName.Contains(filter)
+                || i.Buyer.PhoneNumber.Contains(filter)
+                )).ToListAsync();
+                return await _dsSelectManager.Json(selectName, filtered, nameof(Invoice.Id), nameof(Invoice.Number));
+            }
+            else
+            {
+                return Json("Invalid select name.");
+            }
         }
     }
 }

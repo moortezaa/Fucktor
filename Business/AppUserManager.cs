@@ -49,6 +49,15 @@ namespace Business
                 errors.Add(_localizer["Username must be less than 21 characters."].Value);
             }
 
+            if (user.DisplayName == null)
+            {
+                user.DisplayName = user.Name + user.LastName;
+                if (user.DisplayName == null)
+                {
+                    user.DisplayName = user.UserName;
+                }
+            }
+
             var result = await _userManager.CreateAsync(user, password);
 
 
@@ -333,6 +342,7 @@ namespace Business
             {
                 PhoneNumber = phoneNumber,
                 UserName = phoneNumber,
+                DisplayName = phoneNumber,
                 TwoFactorEnabled = true,
             }, phoneNumber);
             return new UserManagerResult(result);
@@ -487,6 +497,14 @@ namespace Business
 
         public async Task<AuthenticationResult> AddOtherUser(AppUser model)
         {
+            if (model.DisplayName == null)
+            {
+                model.DisplayName = model.Name + model.LastName;
+                if (model.DisplayName == null)
+                {
+                    model.DisplayName = model.UserName;
+                }
+            }
             _appUserRepository.Add(model);
             var rows = await _appUserRepository.SaveChangesAsync();
             if (rows>0)
