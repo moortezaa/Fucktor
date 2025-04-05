@@ -49,11 +49,31 @@
         </div>
     </div>
 
-
+    <div class="row mt-3">
+        <div class="form-group col-12 col-md-3">
+            <label for="item-select">@Model.DisplayNameFor(x => x.InvoiceItems, localizerFactory)</label>
+            <p class="text-black-50">نام یک محصول را وارد کنید یا یک محصول جدید بسازید.</p>
+            <select name="item-select" ds-controller="@nameof(InvoiceController).RemoveController()" ds-model-type="@typeof(AppUser)" ds-name="item-select"></select>
+            <span class="text-danger"></span>
+        </div>
+        <div class="form-group col-12 col-md-12">
+            @{
+                string[] propertieToShow = [
+                nameof(InvoiceItem.Item)+'.'+nameof(InvoiceItem.Item.Name),
+                nameof(InvoiceItem.Item)+'.'+nameof(InvoiceItem.Item.MeasuringUnit),
+                nameof(InvoiceItem.UnitPrice),
+                nameof(InvoiceItem.Amount),
+                nameof(InvoiceItem.Off),
+                ];
+            }
+            <table ds-name="edit-invoice-items" ds-controller="@nameof(InvoiceController).RemoveController()" ds-model-type="typeof(InvoiceItem)"
+                   ds-properties-to-show="propertieToShow" ds-route-values="@(new []{new KeyValuePair<string,object>("invoiceId",Model.Id)})"></table>
+        </div>
+    </div>
 
     <div class="row mt-3">
         <div class="col-2">
-            <button type="submit" class="btn btn-primary">@SR["Add Items"]</button>
+            <button type="submit" class="btn btn-primary">@SR["Submit"]</button>
         </div>
     </div>
 </form>

@@ -50,6 +50,10 @@ namespace Fucktor.Controllers
                 }
                 return await _dsTableManager.Json(rows, tableName);
             }
+            else if (tableName == "edit-invoice-items")
+            {
+
+            }
             return Json("invalid table name");
         }
 
@@ -79,6 +83,32 @@ namespace Fucktor.Controllers
                 return await _dsTableManager.Json(count, tableName);
             }
             return await _dsTableManager.Json(0, tableName);
+        }
+
+        public async Task<JsonResult> DSGetSelectData(string selectName, string filter, string routeValues = null)
+        {
+            if (selectName == "buyer-select")
+            {
+                var filtered = await _appUserManager.AppUserQuery.Where(u => u.Name.Contains(filter) || u.LastName.Contains(filter) || u.PhoneNumber.Contains(filter)).ToListAsync();
+                return await _dsSelectManager.Json(selectName, filtered, nameof(AppUser.Id), nameof(AppUser.DisplayName));
+            }
+            else if (selectName == "main-invoice-select")
+            {
+                var filtered = await _invoiceManager.InvoiceQuery.Where(i => i.SellerId == CurrentUser.Id && (i.Number.ToString().Contains(filter)
+                || i.Buyer.Name.Contains(filter)
+                || i.Buyer.LastName.Contains(filter)
+                || i.Buyer.PhoneNumber.Contains(filter)
+                )).ToListAsync();
+                return await _dsSelectManager.Json(selectName, filtered, nameof(Invoice.Id), nameof(Invoice.Number));
+            }
+            else if (selectName == "item-select")
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                return Json("Invalid select name.");
+            }
         }
 
         [Dashboard("file-invoice", Order = 1)]
@@ -117,28 +147,6 @@ namespace Fucktor.Controllers
             }
 
             return RedirectToAction(nameof(Detail), new { model.Id });
-        }
-
-        public async Task<JsonResult> DSGetSelectData(string selectName, string filter, string routeValues = null)
-        {
-            if (selectName == "buyer-select")
-            {
-                var filtered = await _appUserManager.AppUserQuery.Where(u => u.Name.Contains(filter) || u.LastName.Contains(filter) || u.PhoneNumber.Contains(filter)).ToListAsync();
-                return await _dsSelectManager.Json(selectName, filtered, nameof(AppUser.Id), nameof(AppUser.DisplayName));
-            }
-            else if (selectName == "main-invoice-select")
-            {
-                var filtered = await _invoiceManager.InvoiceQuery.Where(i => i.SellerId == CurrentUser.Id && (i.Number.ToString().Contains(filter)
-                || i.Buyer.Name.Contains(filter)
-                || i.Buyer.LastName.Contains(filter)
-                || i.Buyer.PhoneNumber.Contains(filter)
-                )).ToListAsync();
-                return await _dsSelectManager.Json(selectName, filtered, nameof(Invoice.Id), nameof(Invoice.Number));
-            }
-            else
-            {
-                return Json("Invalid select name.");
-            }
         }
     }
 }
