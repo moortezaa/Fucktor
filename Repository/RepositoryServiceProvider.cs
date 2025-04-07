@@ -15,6 +15,7 @@ namespace Repository
             services.AddScoped<IGatewayAccountRepository, GatewayAccountRepository>();
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();
             services.AddScoped<IInvoiceItemRepository, InvoiceItemRepository>();
+            services.AddScoped<IItemRepository, ItemRepository>();
         }
     }
 }

@@ -6,6 +6,6 @@
         public string Name { get; set; }
         public string MeasuringUnit { get; set; }
 
-        public List<UserItem> Sellers { get; set; }
+        public List<UserItem> Sellers { get; set; } = [];
     }
 }

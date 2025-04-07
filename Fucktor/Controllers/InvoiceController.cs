@@ -11,10 +11,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fucktor.Controllers
 {
-    public class InvoiceController(IServiceProvider serviceProvider, InvoiceManager invoiceManager, IDSTableManager dsTableManager, IStringLocalizer<UserController> localizer, IDSSelectManager dsSelectManager)
+    public class InvoiceController(IServiceProvider serviceProvider, InvoiceManager invoiceManager, IDSTableManager dsTableManager, IStringLocalizer<UserController> localizer, IDSSelectManager dsSelectManager, ItemManager itemManager)
         : BaseController(serviceProvider), IDSTableController, IDSSelectController
     {
         private readonly InvoiceManager _invoiceManager = invoiceManager;
+        private readonly ItemManager _itemManager = itemManager;
         private readonly IDSTableManager _dsTableManager = dsTableManager;
         private readonly IDSSelectManager _dsSelectManager = dsSelectManager;
         private readonly IStringLocalizer<UserController> _localizer = localizer;
@@ -103,7 +104,8 @@ namespace Fucktor.Controllers
             }
             else if (selectName == "item-select")
             {
-                throw new NotImplementedException();
+                var filtered = await _itemManager.ItemQuery.Where(i => i.Sellers.Any(s => s.UserId == CurrentUser.Id) && i.Name.Contains(filter)).ToListAsync();
+                return await _dsSelectManager.Json(selectName, filtered, nameof(Item.Id), nameof(Item.Name));
             }
             else
             {

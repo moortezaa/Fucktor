@@ -1,0 +1,45 @@
+﻿@model ItemViewModel
+@{
+    ViewData["Title"] = SR["Item Edit"].Value;
+
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="@nameof(ItemController.Edit)" asp-controller="@nameof(ItemController).RemoveController()" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <input asp-for="Id" type="hidden" />
+    <div class="row mt-3">
+        <div class="form-group col-12 col-md-3">
+            <label for="Number">@Model.DisplayNameFor(x => x.Name, localizerFactory)</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label for="DateTime">@Model.DisplayNameFor(x => x.MeasuringUnit, localizerFactory)</label>
+            <input asp-for="MeasuringUnit" class="form-control" />
+            <span asp-validation-for="MeasuringUnit" class="text-danger"></span>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label for="DateTime">@Model.DisplayNameFor(x => x.DisplayName, localizerFactory)</label>
+            <input asp-for="DisplayName" class="form-control" />
+            <span asp-validation-for="DisplayName" class="text-danger"></span>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label for="DateTime">@Model.DisplayNameFor(x => x.DefaultUnitPrice, localizerFactory)</label>
+            <input asp-for="DefaultUnitPrice" class="form-control" />
+            <span asp-validation-for="DefaultUnitPrice" class="text-danger"></span>
+        </div>
+        <div class="form-group col-12 col-md-3">
+            <label for="DateTime">@Model.DisplayNameFor(x => x.StorageAmount, localizerFactory)</label>
+            <input asp-for="StorageAmount" class="form-control" />
+            <span asp-validation-for="StorageAmount" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-2">
+            <button type="submit" class="btn btn-primary">@SR["Submit"]</button>
+        </div>
+    </div>
+</form>

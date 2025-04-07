@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewData["Title"] = SR["Invoice List"].Value;
+
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@{
+    var propertiesToShow = new List<string>()
+    {
+        nameof(ItemViewModel.Name),
+        nameof(ItemViewModel.MeasuringUnit),
+        nameof(ItemViewModel.DisplayName),
+        nameof(ItemViewModel.DefaultUnitPrice),
+        nameof(ItemViewModel.StorageAmount),
+    };
+}
+<table ds-model-type="typeof(ItemViewModel)"
+       ds-controller="@nameof(ItemController).Replace("Controller","")"
+       ds-name="index"
+       ds-rows-per-page="10"
+       ds-post-columns="1"
+       ds-properties-to-show="propertiesToShow"></table>

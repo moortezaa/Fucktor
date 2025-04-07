@@ -1,0 +1,13 @@
+﻿@model ItemViewModel
+
+<tr>
+    <td>@Model.Name</td>
+    <td>@Model.MeasuringUnit</td>
+    <td>@Model.DisplayName</td>
+    <td>@Model.DefaultUnitPrice</td>
+    <td>@Model.StorageAmount</td>
+    <td>
+        <a asp-action="@nameof(ItemController.Detail)" asp-controller="@nameof(ItemController).RemoveController()" asp-route-id="@Model.Id" class="btn btn-warning">@SR["Details"]</a>
+        <a asp-action="@nameof(ItemController.Edit)" asp-controller="@nameof(ItemController).RemoveController()" asp-route-id="@Model.Id" class="btn btn-primary">@SR["Edit"]</a>
+    </td>
+</tr>

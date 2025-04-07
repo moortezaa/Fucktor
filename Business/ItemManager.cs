@@ -15,7 +15,7 @@ namespace Business
         private readonly IItemRepository _itemRepository = itemRepository;
         private readonly IStringLocalizer<ItemManager> localizer = localizer;
 
-        public readonly IQueryable ItemQuery = itemRepository.ItemQuery;
+        public readonly IQueryable<Item> ItemQuery = itemRepository.ItemQuery;
 
         public async Task<BusinessResult> CreateOrUpdateItem(Item item)
         {
@@ -66,6 +66,21 @@ namespace Business
                 Succeeded = false,
                 Errors = [localizer["Error removing item."]]
             };
+        }
+
+        public async Task<Item?> GetItemById(Guid id)
+        {
+            return await _itemRepository.GetByIdAsync(id);
+        }
+
+        public async Task<Item?> GetItemByIdIncludeSellers(Guid id)
+        {
+            return await _itemRepository.GetItemByIdIncludeSellers(id);
+        }
+
+        public async Task<List<UserItem>> GetItemSellers(Guid id)
+        {
+            return await _itemRepository.GetItemSellers(id);
         }
     }
 }

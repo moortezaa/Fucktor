@@ -6,6 +6,8 @@ namespace Repository
     {
         IQueryable<Item> ItemQuery { get; }
 
+        Task<Item?> GetItemByIdIncludeSellers(Guid id);
+        Task<List<UserItem>> GetItemSellers(Guid id);
         Task<List<Item>> GetUserItems(Guid userId);
     }
 }

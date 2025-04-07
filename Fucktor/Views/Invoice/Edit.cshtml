@@ -53,17 +53,19 @@
         <div class="form-group col-12 col-md-3">
             <label for="item-select">@Model.DisplayNameFor(x => x.InvoiceItems, localizerFactory)</label>
             <p class="text-black-50">نام یک محصول را وارد کنید یا یک محصول جدید بسازید.</p>
-            <select name="item-select" ds-controller="@nameof(InvoiceController).RemoveController()" ds-model-type="@typeof(AppUser)" ds-name="item-select"></select>
+            <select name="item-select" ds-controller="@nameof(InvoiceController).RemoveController()" ds-model-type="@typeof(AppUser)" ds-name="item-select"
+                    allow-new-value="true"></select>
+            <button id="add-item-button" class="btn btn-success"><i class="fa fa-plus"></i></button>
             <span class="text-danger"></span>
         </div>
         <div class="form-group col-12 col-md-12">
             @{
                 string[] propertieToShow = [
                 nameof(InvoiceItem.Item)+'.'+nameof(InvoiceItem.Item.Name),
-                nameof(InvoiceItem.Item)+'.'+nameof(InvoiceItem.Item.MeasuringUnit),
-                nameof(InvoiceItem.UnitPrice),
-                nameof(InvoiceItem.Amount),
-                nameof(InvoiceItem.Off),
+            nameof(InvoiceItem.Item)+'.'+nameof(InvoiceItem.Item.MeasuringUnit),
+            nameof(InvoiceItem.UnitPrice),
+            nameof(InvoiceItem.Amount),
+            nameof(InvoiceItem.Off),
                 ];
             }
             <table ds-name="edit-invoice-items" ds-controller="@nameof(InvoiceController).RemoveController()" ds-model-type="typeof(InvoiceItem)"
@@ -77,3 +79,11 @@
         </div>
     </div>
 </form>
+
+@section Scripts{
+    <script>
+        $('#add-item-button').on('click',()=>{
+            //TODO: handle selected Item being added to invoice
+        })
+    </script>
+}
