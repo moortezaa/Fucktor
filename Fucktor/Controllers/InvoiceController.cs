@@ -182,6 +182,20 @@ namespace Fucktor.Controllers
                 return View(model);
             }
 
+            var result = await _invoiceManager.UpdateInvoice(model);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error);
+                }
+                if (isAddItem)
+                {
+                    return Json(new { success = false, message = string.Join("\r\n", ModelState.Values.Select(v => string.Join('\n', v.Errors))) });
+                }
+                return View(model);
+            }
+
             if (isAddItem)
             {
                 if (selectedItem == null)
@@ -216,23 +230,9 @@ namespace Fucktor.Controllers
                 }
             }
 
-            var result = await _invoiceManager.UpdateInvoice(model);
-            if (!result.Succeeded)
-            {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError("", error);
-                }
-                if (isAddItem)
-                {
-                    return Json(new { success = false, message = string.Join("\r\n", ModelState.Values.Select(v => string.Join('\n', v.Errors))) });
-                }
-                return View(model);
-            }
-
             if (isAddItem)
             {
-                return Json(new { success = true });
+                return Json(new { success = true, invoiceId = model.Id });
             }
             return RedirectToAction(nameof(Detail), new { model.Id });
         }
@@ -279,7 +279,8 @@ namespace Fucktor.Controllers
         [Permission("EditInvoiceItem")]
         public async Task<JsonResult> DeleteInvoiceItem(Guid invoiceItemId)
         {
-            var result = await _invoiceManager.DeleteInvoiceItem(invoiceItemId); if (result.Succeeded)
+            var result = await _invoiceManager.DeleteInvoiceItem(invoiceItemId); 
+            if (result.Succeeded)
             {
                 return Json(new { success = true });
             }

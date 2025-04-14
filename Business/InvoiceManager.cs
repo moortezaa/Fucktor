@@ -18,7 +18,7 @@ namespace Business
 
         public async Task<Invoice?> GetInvoiceDetails(Guid id)
         {
-            return await _invoiceRepository.GetByIdAsync(id);
+            return await _invoiceRepository.GetByIdIncludeDetailsAsync(id);
         }
 
         public async Task<BusinessResult> UpdateInvoice(Invoice model)
@@ -104,7 +104,7 @@ namespace Business
 
         public async Task<BusinessResult> DeleteInvoiceItem(Guid invoiceItemId)
         {
-            _invoiceRepository.DeleteItem(invoiceItemId);
+            await _invoiceRepository.DeleteItem(invoiceItemId);
             var rows = await _invoiceRepository.SaveChangesAsync();
             if (rows > 0)
             {

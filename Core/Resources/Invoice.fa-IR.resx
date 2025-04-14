@@ -117,40 +117,46 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Changes applied successfuly." xml:space="preserve">
-    <value>تغییرات با موفقیت اعمال شد.</value>
+  <data name="Buyer" xml:space="preserve">
+    <value>خریدار</value>
   </data>
-  <data name="Check your internet connection" xml:space="preserve">
-    <value>اتصال اینترنت خود را بررسی کنید.</value>
+  <data name="BuyerId" xml:space="preserve">
+    <value>خریدار</value>
   </data>
-  <data name="Fail" xml:space="preserve">
-    <value>خطا</value>
+  <data name="DateTime" xml:space="preserve">
+    <value>تاریخ</value>
   </data>
-  <data name="Failed to apply changes." xml:space="preserve">
-    <value>اعمال تغییرات با خطا روبرو شد.</value>
+  <data name="Id" xml:space="preserve">
+    <value>شناسه</value>
   </data>
-  <data name="Final Price" xml:space="preserve">
-    <value>مبلغ نهایی</value>
-  </data>
-  <data name="Invoice" xml:space="preserve">
-    <value>فاکتور</value>
-  </data>
-  <data name="Invoice Edit" xml:space="preserve">
-    <value>ویرایش فاکتور</value>
-  </data>
-  <data name="Items" xml:space="preserve">
+  <data name="InvoiceItems" xml:space="preserve">
     <value>محصولات / خدمات</value>
   </data>
-  <data name="Row" xml:space="preserve">
-    <value>ردیف</value>
+  <data name="MainInvoice" xml:space="preserve">
+    <value>فاکتور اصلی</value>
   </data>
-  <data name="Submit Changes" xml:space="preserve">
-    <value>اعمال تغییرات</value>
+  <data name="MainInvoiceId" xml:space="preserve">
+    <value>فاکتور اصلی</value>
   </data>
-  <data name="Success" xml:space="preserve">
-    <value>موفقیت</value>
+  <data name="Number" xml:space="preserve">
+    <value>شماره</value>
   </data>
-  <data name="This Invoice Contains These Items" xml:space="preserve">
-    <value>این فاکتور شامل موارد زیر می باشد</value>
+  <data name="Seller" xml:space="preserve">
+    <value>فروشنده</value>
+  </data>
+  <data name="SellerId" xml:space="preserve">
+    <value>فروشنده</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>وضعیت</value>
+  </data>
+  <data name="Tax" xml:space="preserve">
+    <value>مالیات</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>مبلغ نهایی</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>نوع</value>
   </data>
 </root>

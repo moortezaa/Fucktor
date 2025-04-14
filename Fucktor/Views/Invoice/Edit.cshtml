@@ -113,6 +113,8 @@
                         contentType: false,
                         success: function (data, status) {
                             if(Boolean(data.success)){
+                                $('#edit-invoice-form').find('input[name=Id]').first().val(data.invoiceId);
+                                $('#edit-invoice-items').data('ds-route-values',[{Key:"invoiceId",Value:data.invoiceId}])
                                 DSGetTableData($('#edit-invoice-items'));
                             }
                         },
@@ -174,7 +176,7 @@
             var id = row.find('input[name=Id]').val();
 
             var formData = new FormData();
-            formData.append('id',id)
+            formData.append('invoiceItemId',id)
 
             $.ajax({
                 url: '@Url.ActionLink(nameof(InvoiceController.DeleteInvoiceItem), nameof(InvoiceController).RemoveController())',

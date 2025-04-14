@@ -1,0 +1,230 @@
+﻿@model Invoice
+@{
+    ViewData["Title"] = SR["Invoice Details"].Value;
+
+}
+
+<style>
+    .Invalidated {
+        border: 8px solid #ff0000c7;
+        border-radius: 10px;
+        width: 400px;
+        height: 150px;
+        transform: rotate(30deg);
+        position: absolute;
+        left: calc(50% - 200px);
+        top: calc(50% - 45px);
+        text-align: center;
+        color: #ff0000c7;
+        font-size: calc(480%);
+        font-weight: 600;
+    @if (Model.Status != InvoiceStatus.Canceled)
+    {
+        @:display: none;
+    }
+    }
+
+    .Paid {
+        border: 8px solid #00800078;
+        border-radius: 10px;
+        width: 400px;
+        height: 150px;
+        transform: rotate(30deg);
+        position: absolute;
+        left: calc(50% - 200px);
+        top: calc(50% - 45px);
+        text-align: center;
+        color: #00800078;
+        font-size: calc(480%);
+        font-weight: 600;
+    @if (Model.Status != InvoiceStatus.Payed)
+    {
+        @: display: none;
+    }
+    }
+
+    .invoice-cell {
+        border: solid 1px black;
+        margin: 0px -1.5px;
+        text-align: center;
+        height: 45px;
+    }
+
+    .invoice-last-row-first-cell {
+        border-top: solid 1px black;
+        border-left: solid 1px black;
+        margin: -15px -7px -4px 0px;
+        height: 30px;
+    }
+
+    .invoice-last-row-middle-cells {
+        border-left: solid 1px black;
+        margin: -9px -3px -9px -1px;
+        height: 35px
+    }
+
+    .invoice-last-row-last-cell {
+        border-top: solid 1px black;
+        margin: -9px -2px -9px -5px;
+        height: 30px;
+    }
+
+    .summary-frame {
+        border-radius: 10px;
+        border: solid 2px black;
+        padding: 2px;
+    }
+
+    .summary-first-cell-inner {
+        border-left: solid 1px black;
+    }
+
+    .summary-last-cell {
+        text-align: center;
+        width: 30%;
+    }
+
+    .invoice-cell-paragraph {
+        height: 100%;
+        padding-top: 8px;
+        text-align: center;
+        margin: 0px;
+    }
+
+    .box-vertical-title {
+        transform: rotate(90deg);
+        width: 30px;
+        height: 30px;
+        margin: 0px 0px -20px -26px;
+    }
+</style>
+<div class="Invalidated"><p style="margin:18px" id="InvalidatedText">@SR["Invalidated"]</p></div>
+<div class="Paid"><p style="margin:18px" id="InvalidatedText">@SR["Paid"]</p></div>
+<div style="width:100%;height:100px;">
+    <table style="width:100%">
+        <tr>
+            <td width="150px">
+                @* <img src="~/Images/logo-03-03.png" height="70" style="margin:15px;display:inline" /> *@
+            </td>
+            <td align="center">
+                <h1 style="display:inline;margin:0px" id="InvoiceTitle">@SR["Invoice"]</h1>
+            </td>
+            <td width="150px">
+                <p id="Number">@Model.Number</p>
+                <p id="Date">@Model.DateTime.ToPersianDateString("yyyy/MM/dd")</p>
+            </td>
+        </tr>
+    </table>
+</div>
+<div style="border-radius:10px;border:solid 2px black">
+    <table style="width:100%">
+        <tr>
+            <td style="border-left: solid 1px black;width:30px">
+                <p class="box-vertical-title" id="SellerText">@Model.DisplayNameFor(x => x.Seller, localizerFactory)</p>
+            </td>
+            <td style="padding:5px;">
+                <div style="display: grid; justify-content: start; grid-gap: 0px 12px; ">
+                    <label style="grid-row:1;">@Model.Seller.DisplayNameFor(x => x.Name, localizerFactory)</label>
+                    <div style="grid-row:1;">@Model.Seller?.Name</div>
+                    <label>@Model.Seller.DisplayNameFor(x => x.LastName, localizerFactory)</label>
+                    <div>@Model.Seller?.LastName</div>
+                    <label>@Model.Seller.DisplayNameFor(x => x.NationalCode, localizerFactory)</label>
+                    <div>@Model.Seller?.NationalCode</div>
+                    <label>@Model.Seller.DisplayNameFor(x => x.PhoneNumber, localizerFactory)</label>
+                    <div>@Model.Seller?.PhoneNumber</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<div style="border-radius:10px;border:solid 2px black;margin-top:10px">
+    <table style="width:100%">
+        <tr>
+            <td style="border-left: solid 1px black;width:30px">
+                <p class="box-vertical-title" id="BuyerText"><label>@Model.DisplayNameFor(x => x.Buyer, localizerFactory)</label></p>
+            </td>
+            <td style="padding: 5px;">
+                <div style="display: grid; justify-content: start; grid-gap: 0px 12px; ">
+                    <label style="grid-row:1;">@Model.Buyer.DisplayNameFor(x => x.Name, localizerFactory)</label>
+                    <div style="grid-row:1;">@Model.Buyer?.Name</div>
+                    <label>@Model.Buyer.DisplayNameFor(x => x.LastName, localizerFactory)</label>
+                    <div>@Model.Buyer?.LastName</div>
+                    <label>@Model.Buyer.DisplayNameFor(x => x.NationalCode, localizerFactory)</label>
+                    <div>@Model.Buyer?.NationalCode</div>
+                    <label>@Model.Buyer.DisplayNameFor(x => x.PhoneNumber, localizerFactory)</label>
+                    <div>@Model.Buyer?.PhoneNumber</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+<div style="border-radius:10px;border:solid 2px black;margin-top:10px;padding:2px">
+    <div style="display: grid; grid-template-columns: 50px auto 25%; background-color: black; grid-gap: 1px;">
+        <div style="grid-row: 1; grid-column: 1/7; text-align: center; background-color: white; ">
+            <p style="display: inline" id="ItemSpecificationsTitle">@SR["Items"]</p>
+            <p style="float: left; margin: 0px; display:inline" id="ItemSpecificationDesc">@SR["This Invoice Contains These Items"]</p>
+        </div>
+        <div style="grid-row: 2; background-color: white; padding:2px;">@SR["Row"]</div>
+        <div style="grid-row: 2; background-color: white; padding: 2px;"><label>@Model.DisplayNameFor(x => x.InvoiceItems, localizerFactory)</label></div>
+        <div style="grid-row: 2; background-color: white; padding: 2px;"><label>@Model.InvoiceItems.FirstOrDefault()?.DisplayNameFor(x => x.UnitPrice, localizerFactory)</label></div>
+        <div style="grid-row: 2; background-color: white; padding: 2px;"><label>@Model.InvoiceItems.FirstOrDefault()?.DisplayNameFor(x => x.Amount, localizerFactory)</label></div>
+        <div style="grid-row: 2; background-color: white; padding: 2px;"><label>@Model.InvoiceItems.FirstOrDefault()?.DisplayNameFor(x => x.Off, localizerFactory)</label></div>
+        <div style="grid-row: 2; background-color: white; padding: 2px;"><label>@Model.DisplayNameFor(x => x.Total, localizerFactory)</label></div>
+        @{
+            decimal total = 0;
+            for (int i = 0; i < Model.InvoiceItems.Count; i++)
+            {
+                var product = Model.InvoiceItems[i].Item;
+                var price = Model.InvoiceItems[i].UnitPrice;
+                var rowTotal = Model.InvoiceItems[i].Amount * price;
+                total += rowTotal;
+                <div style="grid-row:@(i+3); background-color: white; padding:2px;">@(i + 1)</div>
+                <div style="grid-row:@(i+3); background-color: white; padding:2px;">@product.Name</div>
+                <div style="grid-row:@(i+3); background-color: white; padding:2px;">@price.ToString("#") ریال</div>
+                <div style="grid-row:@(i+3); background-color: white; padding:2px;">@Model.InvoiceItems[i].Amount</div>
+                <div style="grid-row:@(i+3); background-color: white; padding:2px;">@Model.InvoiceItems[i].Off %</div>
+                <div style="grid-row:@(i+3); background-color: white; padding:2px;">@(rowTotal.ToString("#")) ریال</div>
+            }
+        }
+        <div style="grid-column: 1/span 5; background-color: white; text-align: left; padding: 2px; "><label asp-for="Total"></label></div>
+        <div style="grid-column: 6; background-color: white; padding: 2px; ">@total ریال</div>
+    </div>
+</div>
+<div style="display: grid; grid-template-areas: 'seller buyer off' 'seller buyer final' 'seller buyer text'; grid-template-rows: auto auto 170px; margin-top: 10px;">
+    <div style="border-radius:10px;border:solid 2px black;padding:2px;grid-area:seller;">
+        <p style="float:right;margin:5px" id="SellerSignText"></p>
+        <p style="float:left;margin:5px" id="CustomerSignText"></p>
+    </div>
+    <div style="border-radius:10px;border:solid 2px black;padding:2px;grid-area:buyer;">
+        <p style="float:right;margin:5px" id="Information"></p>
+    </div>
+    <div class="summary-frame" style="grid-area:off;">
+        <table style="width:100%">
+            <tr>
+                <td>
+                    <div class="summary-first-cell-inner" id="DiscountPersentage"><label>@Model.DisplayNameFor(x => x.Tax, localizerFactory)</label></div>
+                </td>
+                <td class="summary-last-cell" id="Discount">@Model.Tax ریال</td>
+            </tr>
+        </table>
+    </div>
+    <div class="summary-frame" style="grid-area:final;">
+        <table style="width:100%">
+            <tr>
+                <td>
+                    <div class="summary-first-cell-inner" id="TotallyText">@SR["Final Price"]</div>
+                </td>
+                <td class="summary-last-cell" id="Totally">@total ریال</td>
+            </tr>
+        </table>
+    </div>
+    <div class="summary-frame lettered-number" id="TotallyInLetters" style="grid-area:text;">@total.NumberInLetters() ریال</div>
+</div>
+
+<div class="not-in-print">
+    @if (User.IsInRole("Seller"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+    }
+    | <a asp-action="Index">Back to List</a>
+</div>

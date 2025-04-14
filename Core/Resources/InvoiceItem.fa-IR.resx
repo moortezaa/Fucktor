@@ -117,40 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Changes applied successfuly." xml:space="preserve">
-    <value>تغییرات با موفقیت اعمال شد.</value>
+  <data name="Amount" xml:space="preserve">
+    <value>مقدار</value>
   </data>
-  <data name="Check your internet connection" xml:space="preserve">
-    <value>اتصال اینترنت خود را بررسی کنید.</value>
-  </data>
-  <data name="Fail" xml:space="preserve">
-    <value>خطا</value>
-  </data>
-  <data name="Failed to apply changes." xml:space="preserve">
-    <value>اعمال تغییرات با خطا روبرو شد.</value>
-  </data>
-  <data name="Final Price" xml:space="preserve">
-    <value>مبلغ نهایی</value>
+  <data name="Id" xml:space="preserve">
+    <value>شناسه</value>
   </data>
   <data name="Invoice" xml:space="preserve">
     <value>فاکتور</value>
   </data>
-  <data name="Invoice Edit" xml:space="preserve">
-    <value>ویرایش فاکتور</value>
+  <data name="InvoiceId" xml:space="preserve">
+    <value>فاکتور</value>
   </data>
-  <data name="Items" xml:space="preserve">
-    <value>محصولات / خدمات</value>
+  <data name="Item" xml:space="preserve">
+    <value>محصول / خدمت</value>
   </data>
-  <data name="Row" xml:space="preserve">
-    <value>ردیف</value>
+  <data name="ItemId" xml:space="preserve">
+    <value>محصول / خدمت</value>
   </data>
-  <data name="Submit Changes" xml:space="preserve">
-    <value>اعمال تغییرات</value>
+  <data name="Off" xml:space="preserve">
+    <value>تخفیف</value>
   </data>
-  <data name="Success" xml:space="preserve">
-    <value>موفقیت</value>
-  </data>
-  <data name="This Invoice Contains These Items" xml:space="preserve">
-    <value>این فاکتور شامل موارد زیر می باشد</value>
+  <data name="UnitPrice" xml:space="preserve">
+    <value>قیمت واحد</value>
   </data>
 </root>

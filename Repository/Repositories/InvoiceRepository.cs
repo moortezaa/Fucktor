@@ -29,13 +29,14 @@ namespace Repository
                 .Include(i => i.Seller)
                 .Include(i => i.Buyer)
                 .Include(i => i.InvoiceItems)
+                    .ThenInclude(ii => ii.Item)
                 .Where(i => i.Id == id)
                 .SingleOrDefaultAsync();
         }
 
         public async Task<InvoiceItem?> GetInvoiceItemIncludeItemById(Guid invoiceItemId)
         {
-            return await _context.InvoiceItems.Where(ii => ii.Id == invoiceItemId).SingleOrDefaultAsync();
+            return await _context.InvoiceItems.Include(ii => ii.Item).Where(ii => ii.Id == invoiceItemId).SingleOrDefaultAsync();
         }
 
         public async Task<List<Invoice>> GetUserInvoices(Guid userId)
