@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Microsoft.Extensions.Localization;
 using Fucktor.Attributes;
 using Microsoft.EntityFrameworkCore;
+using Business.DTO;
 
 namespace Fucktor.Controllers
 {
@@ -188,8 +189,7 @@ namespace Fucktor.Controllers
                     return Json(new { success = false, message = "item is required." });
                 }
 
-                //TODO: Make sure user doesn't add duplicate items or create items with same names.
-                //selectedItem is eather the name for a new Item or the ID for an existing item
+                //selectedItem is eather "the name for a new Item" or "the ID for an existing item"
                 Item? item = null;
                 if (Guid.TryParse(selectedItem, out Guid selectedItemId))
                 {
@@ -202,17 +202,18 @@ namespace Fucktor.Controllers
                         Name = selectedItem,
                         MeasuringUnit = string.Empty
                     };
-                    item.Sellers.Add(new UserItem()
+                    var itemResult = await _itemManager.CreateOrUpdateItem(item, CurrentUser);
+                    if (!itemResult.Succeeded)
                     {
-                        UserId = CurrentUser.Id,
-                        DisplayName = selectedItem
-                    });
+                        return Json(new { success = false, message = $"couldn't add item, reson:{string.Join("\r\n", itemResult.Errors)}" });
+                    }
+                    item = itemResult.Item;
                 }
-                //TODO: load unit price from userItem default unit price
-                model.InvoiceItems.Add(new InvoiceItem()
+                var addItemResult = await _invoiceManager.AddItemToInvoice(model.Id, item.Id, CurrentUser.Id);
+                if (!addItemResult.Succeeded)
                 {
-                    Item = item,
-                });
+                    return Json(new { success = false, message = $"couldn't add item, reson:{string.Join("\r\n", addItemResult.Errors)}" });
+                }
             }
 
             var result = await _invoiceManager.UpdateInvoice(model);
@@ -224,7 +225,7 @@ namespace Fucktor.Controllers
                 }
                 if (isAddItem)
                 {
-                    return Json(new { success = false, message = string.Join('\n', ModelState.Values.Select(v => string.Join('\n', v.Errors))) });
+                    return Json(new { success = false, message = string.Join("\r\n", ModelState.Values.Select(v => string.Join('\n', v.Errors))) });
                 }
                 return View(model);
             }
@@ -240,7 +241,6 @@ namespace Fucktor.Controllers
         [Permission("EditInvoiceItem")]
         public async Task<JsonResult> EditInvoiceItem(Guid id, string measuringUnit, decimal unitPrice, int amount, float off)
         {
-            //TODO: Add another method to delete invoice items
             var invoiceItem = await _invoiceManager.GetInvoiceItemIncludeItemById(id);
             if (invoiceItem == null)
             {
@@ -273,6 +273,17 @@ namespace Fucktor.Controllers
                 return Json(new { success = true });
             }
             return Json(new { success = false, message = _localizer["Couldn't Update item."].Value });
+        }
+
+        [HttpPost]
+        [Permission("EditInvoiceItem")]
+        public async Task<JsonResult> DeleteInvoiceItem(Guid invoiceItemId)
+        {
+            var result = await _invoiceManager.DeleteInvoiceItem(invoiceItemId); if (result.Succeeded)
+            {
+                return Json(new { success = true });
+            }
+            return Json(new { success = false, message = _localizer["Couldn't Delete item."].Value });
         }
     }
 }

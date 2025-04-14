@@ -17,18 +17,70 @@ namespace Business
 
         public readonly IQueryable<Item> ItemQuery = itemRepository.ItemQuery;
 
-        public async Task<BusinessResult> CreateOrUpdateItem(Item item)
+        public async Task<ItemResult> CreateOrUpdateItem(Item item, AppUser? seller = null)
         {
-            _itemRepository.Update(item);
-            var rows = await _itemRepository.SaveChangesAsync();
-            if (rows > 0)
+            //check if the name is duplicate
+            //if the name is duplicate we will use the userItem to customize the item for this user and do not update the item itself
+            var duplicateItem = await _itemRepository.GetItemByName(item.Name);
+            if (duplicateItem != null && duplicateItem.Id != item.Id)
             {
-                return new BusinessResult()
+                //the user is trying to add an item which already exist, so we use the userItem to customize it
+                if (seller == null)
                 {
-                    Succeeded = true,
-                };
+                    throw new Exception("seller is required to customize an Item");
+                }
+                duplicateItem.Sellers.Add(new UserItem()
+                {
+                    UserId = seller.Id,
+                    DefaultUnitPrice = item.Sellers.FirstOrDefault()?.DefaultUnitPrice ?? 0,
+                    DisplayName = item.Sellers.FirstOrDefault()?.DisplayName ?? item.Name,
+                    StorageAmount = item.Sellers.FirstOrDefault()?.StorageAmount ?? 0,
+                });
+                _itemRepository.Update(duplicateItem);
+                var rows = await _itemRepository.SaveChangesAsync();
+                if (rows > 0)
+                {
+                    return new ItemResult()
+                    {
+                        Succeeded = true,
+                        Item = duplicateItem
+                    };
+                }
             }
-            return new BusinessResult()
+            else
+            {
+                //sellers should not be modified in this context and should be handled by the seller argument.
+                item.Sellers = [];
+
+                if (seller != null)
+                {
+                    var itemSeller = await _itemRepository.GetItemSeller(item.Id, seller.Id);
+                    if (itemSeller == null)
+                    {
+                        item.Sellers.Add(new UserItem()
+                        {
+                            User = seller,
+                            DisplayName = item.Name,
+                        });
+                    }
+                }
+                _itemRepository.Update(item);
+                var rows = await _itemRepository.SaveChangesAsync();
+                if (rows > 0)
+                {
+                    var itemSeller = await _itemRepository.GetItemSeller(item.Id, seller.Id);
+                    if (itemSeller != null)
+                    {
+                        item.Sellers.Add(itemSeller);
+                    }
+                    return new ItemResult()
+                    {
+                        Succeeded = true,
+                        Item = item
+                    };
+                }
+            }
+            return new ItemResult()
             {
                 Succeeded = false,
                 Errors = [localizer["Error updating item."]]

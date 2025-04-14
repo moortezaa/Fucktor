@@ -63,10 +63,10 @@
             @{
                 string[] propertieToShow = [
                 nameof(InvoiceItem.Item)+'.'+nameof(InvoiceItem.Item.Name),
-                nameof(InvoiceItem.Item)+'.'+nameof(InvoiceItem.Item.MeasuringUnit),
-                nameof(InvoiceItem.UnitPrice),
-                nameof(InvoiceItem.Amount),
-                nameof(InvoiceItem.Off),
+            nameof(InvoiceItem.Item)+'.'+nameof(InvoiceItem.Item.MeasuringUnit),
+            nameof(InvoiceItem.UnitPrice),
+            nameof(InvoiceItem.Amount),
+            nameof(InvoiceItem.Off),
                 ];
             }
             <table ds-name="edit-invoice-items"
@@ -169,5 +169,31 @@
                 }
             })
         })
+        $(document).on('click','.btn-remove-item',(e)=>{
+            var row = $(e.currentTarget).parent().parent();
+            var id = row.find('input[name=Id]').val();
+
+            var formData = new FormData();
+            formData.append('id',id)
+
+            $.ajax({
+                url: '@Url.ActionLink(nameof(InvoiceController.DeleteInvoiceItem), nameof(InvoiceController).RemoveController())',
+                type: 'post',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data, status) {
+                    if(Boolean(data.success)){
+                        DSGetTableData($('#edit-invoice-items'));
+                        Toast('@SR["Success"]','@SR["Changes applied successfuly."]','success');
+                    }else{
+                        Toast('@SR["Fail"]','@SR["Failed to apply changes."]','danger');
+                    }
+                },
+                error: function (xhr, desc, err) {
+                        Toast('@SR["Fail"]','@SR["Check your internet connection"]','danger');
+                }
+            })
+        });
     </script>
 }
