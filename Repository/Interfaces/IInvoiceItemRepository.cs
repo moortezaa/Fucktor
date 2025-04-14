@@ -6,5 +6,6 @@ namespace Repository
     {
         IQueryable<InvoiceItem> InvoiceItemQuery { get; }
 
+        Task<InvoiceItem?> GetByIdIncludeItemAsync(Guid id);
     }
 }

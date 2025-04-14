@@ -29,7 +29,7 @@ namespace Fucktor.Controllers
         }
 
         [Permission("GetUserTables", true)]
-        public async Task<JsonResult> DSGetTableData(string tableName, string sortPropertyName, bool? sortDesending, string filters, int page = 1, int rowsPerPage = 10, string routeValues = null)
+        public async Task<JsonResult> DSGetTableData(string tableName, string sortPropertyName, bool? sortDesending, string filters, int page = 1, int rowsPerPage = 10)
         {
             if (tableName == "index")
             {
@@ -71,7 +71,7 @@ namespace Fucktor.Controllers
         }
 
         [Permission("GetUserTables", true)]
-        public async Task<JsonResult> DSGetTableDataCount(string tableName, string filters, string routeValues = null)
+        public async Task<JsonResult> DSGetTableDataCount(string tableName, string filters)
         {
             if (tableName == "index")
             {
@@ -118,6 +118,17 @@ namespace Fucktor.Controllers
             if (!ModelState.IsValid)
             {
                 return View(model);
+            }
+            if (model.DisplayName == null)
+            {
+                if (model.LegalPersonType == LegalPersonType.NaturalPerson)
+                {
+                    model.DisplayName = $"{model.Name} {model.LastName} {model.CompanyName}";
+                }
+                else
+                {
+                    model.DisplayName = model.CompanyName;
+                }
             }
             var result = await _appUserManager.AddUser(model, model.Password);
             if (!result.Succeeded)

@@ -117,25 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Changes applied successfuly." xml:space="preserve">
-    <value>تغییرات با موفقیت اعمال شد.</value>
+  <data name="Couldn't Update item." xml:space="preserve">
+    <value>محصول بروزرسانی نشد.</value>
   </data>
-  <data name="Check your internet connection" xml:space="preserve">
-    <value>اتصال اینترنت خود را بررسی کنید.</value>
-  </data>
-  <data name="Fail" xml:space="preserve">
-    <value>خطا</value>
-  </data>
-  <data name="Failed to apply changes." xml:space="preserve">
-    <value>اعمال تغییرات با خطا روبرو شد.</value>
-  </data>
-  <data name="Invoice Edit" xml:space="preserve">
-    <value>ویرایش فاکتور</value>
-  </data>
-  <data name="Submit Changes" xml:space="preserve">
-    <value>اعمال تغییرات</value>
-  </data>
-  <data name="Success" xml:space="preserve">
-    <value>موفقیت</value>
+  <data name="item not found." xml:space="preserve">
+    <value>محصول پیدا نشد.</value>
   </data>
 </root>

@@ -1,0 +1,27 @@
+﻿@model InvoiceItem
+
+<tr>
+    <td>
+        <input name="Id" type="hidden" value="@Model.Id" />
+        @Model.Item.Name
+    </td>
+    <td>
+        <input name="MeasuringUnit" type="text" value="@Model.Item.MeasuringUnit" class="form-control d-inline input-edit-item"/>
+    </td>
+    <td>
+        <input name="UnitPrice" type="number" value="@Model.UnitPrice" class="form-control d-inline input-edit-item"/>
+    </td>
+    <td>
+        <input name="Amount" type="number" value="@Model.Amount" class="form-control d-inline input-edit-item"/>
+    </td>
+    <td>
+        <input name="Off" type="number" value="@Model.Off" class="form-control d-inline w-75 me-0 ms-1 input-edit-item"/>%
+    </td>
+    <td class="edit-item-row-total">
+        @(Model.UnitPrice * Model.Amount * (decimal)(1 - (Model.Off / 100)))
+    </td>
+    <td>
+        <button type="button" class="btn btn-sm btn-success btn-edit-item-submit">@SR["Submit Changes"]</button>
+        <button type="button" class="btn btn-sm btn-danger btn-remove-item"><i class="fa fa-trash"></i></button>
+    </td>
+</tr>

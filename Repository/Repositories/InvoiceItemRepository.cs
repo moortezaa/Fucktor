@@ -11,5 +11,12 @@ namespace Repository
         }
 
         public IQueryable<InvoiceItem> InvoiceItemQuery { get => _context.InvoiceItems; }
+
+        public async Task<InvoiceItem?> GetByIdIncludeItemAsync(Guid id)
+        {
+            return await _context.InvoiceItems
+                .Include(ii=>ii.Item)
+                .Where(ii=>ii.Id == id).SingleOrDefaultAsync();
+        }
     }
 }

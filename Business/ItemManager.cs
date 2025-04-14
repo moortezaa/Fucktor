@@ -21,7 +21,7 @@ namespace Business
         {
             _itemRepository.Update(item);
             var rows = await _itemRepository.SaveChangesAsync();
-            if (rows>0)
+            if (rows > 0)
             {
                 return new BusinessResult()
                 {
@@ -81,6 +81,34 @@ namespace Business
         public async Task<List<UserItem>> GetItemSellers(Guid id)
         {
             return await _itemRepository.GetItemSellers(id);
+        }
+
+        public async Task<UserItem?> GetUserItem(Guid userId, Guid itemId)
+        {
+            return await _itemRepository.GetUserItem(userId, itemId);
+        }
+
+        public async Task<BusinessResult> CreateUserItem(UserItem userItem)
+        {
+            _itemRepository.AddUserItem(userItem);
+            var rows = await _itemRepository.SaveChangesAsync();
+            if (rows > 0)
+            {
+                return new BusinessResult()
+                {
+                    Succeeded = true,
+                };
+            }
+            return new BusinessResult()
+            {
+                Succeeded = false,
+                Errors = ["now rows affected."]
+            };
+        }
+
+        public async Task<Item?> GetItemByName(string name)
+        {
+            return await _itemRepository.GetItemByName(name);
         }
     }
 }

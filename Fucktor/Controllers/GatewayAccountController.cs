@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Fucktor.Controllers
 {
-    public class GatewayAccountController : BaseController, IDSTableController
+    public class GatewayAccountController : BaseController
     {
         private readonly GatewayAccountManager _gatewayAccountManager;
         private readonly IDSTableManager _dsTableManager;
@@ -17,13 +17,12 @@ namespace Fucktor.Controllers
             _dsTableManager = dsTableManager;
         }
 
-        public async Task<JsonResult> DSGetTableData(string tableName, string sortPropertyName, bool? sortDesending, string filters, int page = 1, int rowsPerPage = 10, string routeValues = null)
+        public async Task<JsonResult> DSGetTableData(string tableName, string sortPropertyName, bool? sortDesending, string filters, int page = 1, int rowsPerPage = 10,string? userId = null)
         {
             if (tableName == "gateway-accounts")
             {
                 var gatewayAccounts = _gatewayAccountManager.GatewayAccountQuery;
-                var routeValuesParsed = JsonConvert.DeserializeObject<List<KeyValuePair<string, object>>>(routeValues);
-                var userId = (string?)routeValuesParsed?.Where(x=>x.Key == "userId").FirstOrDefault().Value;
+                
                 if (userId == null)
                 {
                     return Json("user most not be null!");
@@ -45,13 +44,11 @@ namespace Fucktor.Controllers
             return Json("invalid table name");
         }
 
-        public async Task<JsonResult> DSGetTableDataCount(string tableName, string filters, string routeValues = null)
+        public async Task<JsonResult> DSGetTableDataCount(string tableName, string filters, string? userId = null)
         {
             if (tableName == "gateway-accounts")
             {
                 var gatewayAccounts = _gatewayAccountManager.GatewayAccountQuery;
-                var routeValuesParsed = JsonConvert.DeserializeObject<List<KeyValuePair<string, object>>>(routeValues);
-                var userId = (string?)routeValuesParsed?.Where(x => x.Key == "userId").FirstOrDefault().Value;
                 if (userId == null)
                 {
                     return Json("user most not be null!");

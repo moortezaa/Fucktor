@@ -178,11 +178,15 @@ namespace Business
                     "ViewHome",
                     "UseDashboard",
                     "GetInvoiceTable",
+                    "ViewInvoices",
+                    "ViewInvoiceDetails",
+                    "EditInvoice",
                     "EditUser",
                     "ViewUserDetail",
                     "VerifyPhoneNumber",
                     "ChangePassword",
                     "EnableTwoFactor",
+                    "EditInvoiceItem",
                 };
                 foreach (var permission in sellerPermissions)
                 {
@@ -194,7 +198,7 @@ namespace Business
                 }
                 
                 // Check if the Seller role exists, then add it if it doesn't
-                var buyerRoleName = "Seller";
+                var buyerRoleName = "Buyer";
                 var buyerRole = appRoleManager.GetRoleByName(buyerRoleName).Result;
                 rolePermissions = [];
                 if (buyerRole == null)

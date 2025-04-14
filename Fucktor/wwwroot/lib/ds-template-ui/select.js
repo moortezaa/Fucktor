@@ -8,11 +8,16 @@
         select.find('.ds-select-filter').on('blur', (e) => {
             var select = $(e.currentTarget).parent();
             var dropDown = select.find('.ds-select-drop-down');
-            var option = dropDown.children('[selected=selected]');
             dropDown.collapse('hide');
+            var option = dropDown.children('[selected=selected]');
             var selectInput = dropDown.parent().find('.ds-select-input');
-            selectInput.val(option.attr('value'));
-            select.find('.ds-select-filter').val(option.text());
+
+            if (Boolean(select.data('ds-allow-new-value')) && option.length == 0) {
+                selectInput.val($(e.currentTarget).val());
+            } else {
+                selectInput.val(option.attr('value'));
+                $(e.currentTarget).val(option.text());
+            }
         })
         select.find('.ds-select-filter').on('keydown', (e) => {
             if (e.code == "ArrowDown" || e.code == "ArrowUp") {
@@ -32,7 +37,34 @@
                     newOption.attr('selected', 1);
                 }
             }
+            else if (e.code == "Escape") {
+                var dropDown = select.find('.ds-select-drop-down');
+                dropDown.html('');
+            }
         })
+        var selectedKey = select.find('.ds-select-input').val();
+        var name = select.data('ds-name');
+        var dataUrl = select.data('ds-data-url');
+        var data = new FormData();
+        data.append('selectName', name);
+        data.append('selectedKey', selectedKey);
+        $.ajax({
+            url: dataUrl,
+            type: "post",
+            dataType: "json",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function (data, status) {
+                var select = $('#' + data.selectName);
+                if (data.options.length > 0) {
+                    select.find('.ds-select-filter').val(data.options[0].text)
+                }
+            },
+            error: function (xhr, desc, err) {
+                console.error(desc, err);
+            }
+        });
     }
 })
 

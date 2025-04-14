@@ -22,7 +22,7 @@ namespace Fucktor.Controllers
         private readonly IStringLocalizer<UserController> _localizer = localizer;
 
         [Permission("GetInvoiceTable", true)]
-        public async Task<JsonResult> DSGetTableData(string tableName, string sortPropertyName, bool? sortDesending, string filters, int page = 1, int rowsPerPage = 10, string routeValues = null)
+        public async Task<JsonResult> DSGetTableData(string tableName, string sortPropertyName, bool? sortDesending, string filters, int page = 1, int rowsPerPage = 10)
         {
             if (tableName == "index")
             {
@@ -87,7 +87,7 @@ namespace Fucktor.Controllers
         }
 
         [Permission("GetInvoiceTable", true)]
-        public async Task<JsonResult> DSGetTableDataCount(string tableName, string filters, string routeValues = null)
+        public async Task<JsonResult> DSGetTableDataCount(string tableName, string filters)
         {
             if (tableName == "index")
             {
@@ -168,23 +168,31 @@ namespace Fucktor.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(ItemViewModel model)
         {
-            if (model.Id != null)
+            if (model.Id == Guid.Empty)
+            {
+                var existingItem = await _itemManager.GetItemByName(model.Name);
+                if (existingItem != null)
+                {
+                    model.Id = existingItem.Id;
+                }
+                else
+                {
+                    model.Sellers.Add(new UserItem()
+                    {
+                        DefaultUnitPrice = model.DefaultUnitPrice,
+                        DisplayName = model.DisplayName,
+                        StorageAmount = model.StorageAmount,
+                        UserId = CurrentUser.Id
+                    });
+                }
+            }
+            if (model.Id != Guid.Empty)
             {
                 model.Sellers = await _itemManager.GetItemSellers(model.Id);
                 var userItem = model.Sellers.Where(s => s.UserId == CurrentUser.Id).Single();
                 userItem.DefaultUnitPrice = model.DefaultUnitPrice;
                 userItem.DisplayName = model.DisplayName;
                 userItem.StorageAmount = model.StorageAmount;
-            }
-            else
-            {
-                model.Sellers.Add(new UserItem()
-                {
-                    DefaultUnitPrice = model.DefaultUnitPrice,
-                    DisplayName = model.DisplayName,
-                    StorageAmount = model.StorageAmount,
-                    UserId = CurrentUser.Id
-                });
             }
             ModelState.MarkFieldValid(nameof(ItemViewModel.Sellers));
             if (!ModelState.IsValid)

@@ -6,9 +6,10 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<form asp-action="@nameof(InvoiceController.Edit)" asp-controller="@nameof(InvoiceController).RemoveController()" method="post">
+<form id="edit-invoice-form" asp-action="@nameof(InvoiceController.Edit)" asp-controller="@nameof(InvoiceController).RemoveController()" method="post">
     <div asp-validation-summary="All" class="text-danger"></div>
     <input asp-for="Id" type="hidden" />
+    <input name="isAddItem" type="hidden" value="false" />
     <div class="row mt-3">
         <div class="form-group col-12 col-md-3">
             <label for="Number">@Model.DisplayNameFor(x => x.Number, localizerFactory)</label>
@@ -49,41 +50,124 @@
         </div>
     </div>
 
-    <div class="row mt-3">
+    <div class="row mt-5">
         <div class="form-group col-12 col-md-3">
             <label for="item-select">@Model.DisplayNameFor(x => x.InvoiceItems, localizerFactory)</label>
             <p class="text-black-50">نام یک محصول را وارد کنید یا یک محصول جدید بسازید.</p>
-            <select name="item-select" ds-controller="@nameof(InvoiceController).RemoveController()" ds-model-type="@typeof(AppUser)" ds-name="item-select"
+            <select name="selectedItem" ds-controller="@nameof(InvoiceController).RemoveController()" ds-model-type="@typeof(AppUser)" ds-name="item-select"
                     allow-new-value="true"></select>
-            <button id="add-item-button" class="btn btn-success"><i class="fa fa-plus"></i></button>
+            <button id="add-item-button" class="btn btn-success mt-1" type="button"><i class="fa fa-plus"></i>اضافه کردن محصول انتخاب شده</button>
             <span class="text-danger"></span>
         </div>
-        <div class="form-group col-12 col-md-12">
+        <div class="form-group col-12 col-md-12 mt-3">
             @{
                 string[] propertieToShow = [
                 nameof(InvoiceItem.Item)+'.'+nameof(InvoiceItem.Item.Name),
-            nameof(InvoiceItem.Item)+'.'+nameof(InvoiceItem.Item.MeasuringUnit),
-            nameof(InvoiceItem.UnitPrice),
-            nameof(InvoiceItem.Amount),
-            nameof(InvoiceItem.Off),
+                nameof(InvoiceItem.Item)+'.'+nameof(InvoiceItem.Item.MeasuringUnit),
+                nameof(InvoiceItem.UnitPrice),
+                nameof(InvoiceItem.Amount),
+                nameof(InvoiceItem.Off),
                 ];
             }
-            <table ds-name="edit-invoice-items" ds-controller="@nameof(InvoiceController).RemoveController()" ds-model-type="typeof(InvoiceItem)"
-                   ds-properties-to-show="propertieToShow" ds-route-values="@(new []{new KeyValuePair<string,object>("invoiceId",Model.Id)})"></table>
+            <table ds-name="edit-invoice-items"
+                   ds-controller="@nameof(InvoiceController).RemoveController()"
+                   ds-model-type="typeof(InvoiceItem)"
+                   ds-properties-to-show="propertieToShow"
+                   ds-route-values="@(new []{new KeyValuePair<string,object>("invoiceId",Model.Id)})"
+                   ds-post-columns="2"
+                   ds-rows-per-page="100"></table>
         </div>
     </div>
 
     <div class="row mt-3">
         <div class="col-2">
-            <button type="submit" class="btn btn-primary">@SR["Submit"]</button>
+            <button id="edit-invoice-form-submit" type="submit" class="btn btn-primary">@SR["Submit"]</button>
         </div>
     </div>
 </form>
 
-@section Scripts{
+@section Scripts {
     <script>
+        let isAddItem = false;
         $('#add-item-button').on('click',()=>{
-            //TODO: handle selected Item being added to invoice
+            $('input[name=isAddItem]').val(true);
+            isAddItem = true;
+            $('#edit-invoice-form').submit();
+        });
+        $('#edit-invoice-form-submit').on('click',()=>{
+            $('input[name=isAddItem]').val(false);
+            isAddItem = false;
+        });
+        $(document).ready(()=>{
+            $('#edit-invoice-form').on('submit',(e)=>{
+                if(isAddItem){
+                    e.preventDefault();
+                    var form = e.currentTarget;
+                    var data = new FormData(form);
+
+                    $.ajax({
+                        url: form.action,
+                        type: form.method,
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        success: function (data, status) {
+                            if(Boolean(data.success)){
+                                DSGetTableData($('#edit-invoice-items'));
+                            }
+                        },
+                        error: function (xhr, desc, err) {
+
+                        }
+                    })
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).on('input','.input-edit-item',(e)=>{
+            var row = $(e.currentTarget).parent().parent();
+            var unitPrice = row.find('input[name=UnitPrice]').val();
+            var amount = row.find('input[name=Amount]').val();
+            var off = row.find('input[name=Off]').val();
+
+            row.find('.edit-item-row-total').text(
+                new Intl.NumberFormat("fa-IR", { style: "currency", currency: "IRR" }).format(
+                unitPrice * amount * (1 - (off / 100)),
+            ));
+        })
+        $(document).on('click','.btn-edit-item-submit',(e)=>{
+            var row = $(e.currentTarget).parent().parent();
+            var id = row.find('input[name=Id]').val();
+            var measuringUnit = row.find('input[name=MeasuringUnit]').val();
+            var unitPrice = row.find('input[name=UnitPrice]').val();
+            var amount = row.find('input[name=Amount]').val();
+            var off = row.find('input[name=Off]').val();
+
+            var formData = new FormData();
+            formData.append('id',id)
+            formData.append('measuringUnit',measuringUnit)
+            formData.append('unitPrice',unitPrice)
+            formData.append('amount',amount)
+            formData.append('off',off)
+
+            $.ajax({
+                url: '@Url.ActionLink(nameof(InvoiceController.EditInvoiceItem), nameof(InvoiceController).RemoveController())',
+                type: 'post',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data, status) {
+                    if(Boolean(data.success)){
+                        Toast('@SR["Success"]','@SR["Changes applied successfuly."]','success');
+                    }else{
+                        Toast('@SR["Fail"]','@SR["Failed to apply changes."]','danger');
+                    }
+                },
+                error: function (xhr, desc, err) {
+                        Toast('@SR["Fail"]','@SR["Check your internet connection"]','danger');
+                }
+            })
         })
     </script>
 }
