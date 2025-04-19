@@ -95,7 +95,7 @@ namespace Business
         {
             _invoiceRepository.UpdateItem(invoiceItem);
             var rows = await _invoiceRepository.SaveChangesAsync();
-            if (rows>0)
+            if (rows > 0)
             {
                 return new BusinessResult(true);
             }
@@ -105,6 +105,23 @@ namespace Business
         public async Task<BusinessResult> DeleteInvoiceItem(Guid invoiceItemId)
         {
             await _invoiceRepository.DeleteItem(invoiceItemId);
+            var rows = await _invoiceRepository.SaveChangesAsync();
+            if (rows > 0)
+            {
+                return new BusinessResult(true);
+            }
+            return new BusinessResult(false, "no rows affected.");
+        }
+
+        public async Task<long?> GetLastUserInvoiceNumber(Guid userId)
+        {
+            return await _invoiceRepository.GetLastUserInvoiceNumber(userId);
+        }
+
+        public async Task<BusinessResult> DeleteInvoice(Guid id)
+        {
+            var invoice = await _invoiceRepository.GetByIdAsync(id);
+            _invoiceRepository.Remove(invoice);
             var rows = await _invoiceRepository.SaveChangesAsync();
             if (rows > 0)
             {

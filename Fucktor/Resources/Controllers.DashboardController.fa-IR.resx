@@ -126,6 +126,9 @@
   <data name="Invoice.Index" xml:space="preserve">
     <value>فاکتور ها</value>
   </data>
+  <data name="Item.Index" xml:space="preserve">
+    <value>محصولات و خدمات</value>
+  </data>
   <data name="User.Index" xml:space="preserve">
     <value>کاربران</value>
   </data>

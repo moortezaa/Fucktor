@@ -10,6 +10,7 @@ namespace Repository
         Task DeleteItem(Guid invoiceItemId);
         Task<Invoice?> GetByIdIncludeDetailsAsync(Guid id);
         Task<InvoiceItem?> GetInvoiceItemIncludeItemById(Guid invoiceItemId);
+        Task<long?> GetLastUserInvoiceNumber(Guid userId);
         Task<List<Invoice>> GetUserInvoices(Guid userId);
         void UpdateItem(InvoiceItem invoiceItem);
     }

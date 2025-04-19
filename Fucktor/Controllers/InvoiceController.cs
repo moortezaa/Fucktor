@@ -160,7 +160,9 @@ namespace Fucktor.Controllers
         [Permission("EditInvoice")]
         public async Task<IActionResult> Edit(Guid? id)
         {
+            var lastUserInvoiceNumber = await _invoiceManager.GetLastUserInvoiceNumber(CurrentUser.Id)??0;
             var invoice = new Invoice() { DateTime = DateTime.Now };
+            invoice.Number = lastUserInvoiceNumber + 1;
             if (id != null)
             {
                 invoice = await _invoiceManager.GetInvoiceById(id.Value);
@@ -285,6 +287,18 @@ namespace Fucktor.Controllers
                 return Json(new { success = true });
             }
             return Json(new { success = false, message = _localizer["Couldn't Delete item."].Value });
+        }
+
+        [HttpPost]
+        [Permission("DeleteInvoice")]
+        public async Task<IActionResult> DeleteInvoice(Guid id)
+        {
+            var result = await _invoiceManager.DeleteInvoice(id);
+            if (result.Succeeded)
+            {
+                return Json(new { success = true });
+            }
+            return Json(new { success = false, message = _localizer["Couldn't Delete invoice."].Value });
         }
     }
 }

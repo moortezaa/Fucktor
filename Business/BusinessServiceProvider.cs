@@ -187,6 +187,7 @@ namespace Business
                     "ChangePassword",
                     "EnableTwoFactor",
                     "EditInvoiceItem",
+                    "DeleteInvoice",
                 };
                 foreach (var permission in sellerPermissions)
                 {

@@ -10,5 +10,9 @@
     <td>
         <a asp-action="@nameof(InvoiceController.Detail)" asp-controller="@nameof(InvoiceController).RemoveController()" asp-route-id="@Model.Id" class="btn btn-warning">@SR["Details"]</a>
         <a asp-action="@nameof(InvoiceController.Edit)" asp-controller="@nameof(InvoiceController).RemoveController()" asp-route-id="@Model.Id" class="btn btn-primary">@SR["Edit"]</a>
+        @if (Model.Status == InvoiceStatus.PreIncvoice)
+        {
+            <button class="btn btn-danger btn-invoice-delete" data-id="@Model.Id"><i class="fa fa-trash"></i></button>
+        }
     </td>
 </tr>

@@ -23,3 +23,34 @@
        ds-rows-per-page="10"
        ds-post-columns="1"
        ds-properties-to-show="propertiesToShow"></table>
+
+
+@section Scripts{
+    <script>
+        $(document).on('click','.btn-invoice-delete',(e)=>{
+            var id = $(e.currentTarget).data('id');
+
+            var formData = new FormData();
+            formData.append('id',id)
+
+            $.ajax({
+                url: '@Url.ActionLink(nameof(InvoiceController.DeleteInvoice), nameof(InvoiceController).RemoveController())',
+                type: 'post',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data, status) {
+                    if(Boolean(data.success)){
+                        DSGetTableData($('#index'));
+                        Toast('@SR["Success"]','@SR["Changes applied successfuly."]','success');
+                    }else{
+                        Toast('@SR["Fail"]','@SR["Failed to apply changes."]','danger');
+                    }
+                },
+                error: function (xhr, desc, err) {
+                        Toast('@SR["Fail"]','@SR["Check your internet connection"]','danger');
+                }
+            })
+        });
+    </script>
+}
